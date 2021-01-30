@@ -10,8 +10,8 @@
     "start": "netlify-lambda serve src",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "netlify-lambda build ./src",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "author": "Kemal Ahmed",
   "license": "ISC",
