@@ -11,19 +11,19 @@ const app = express()
 
 // new
 
-const Element = require('./mocks/Element.json')
-const ElementResponse = require('./mocks/ElementResponse.json')
-const ElementListResponse = require('./mocks/ElementListResponse.json')
+const Element = require('./models/Element.json')
+const ElementResponse = require('./models/ElementResponse.json')
+const ElementListResponse = require('./models/ElementListResponse.json')
 
-const LoginModel = require('./mocks/LoginModel.json')
-const LoginResponseModel = require('./mocks/LoginResponseModel.json')
+const LoginModel = require('./models/LoginModel.json')
+const LoginResponseModel = require('./models/LoginResponseModel.json')
 
-const OutputResponse = require('./mocks/OutputResponse.json')
-const OutputResponseList = require('./mocks/OutputResponseList.json')
-const Template = require('./mocks/Template.json')
-const TemplateResponse = require('./mocks/TemplateResponse.json')
-const TemplateResponseList = require('./mocks/TemplateResponseList.json')
-const View = require('./mocks/View.json')
+const OutputResponse = require('./models/OutputResponse.json')
+const OutputResponseList = require('./models/OutputResponseList.json')
+const Template = require('./models/Template.json')
+const TemplateResponse = require('./models/TemplateResponse.json')
+const TemplateResponseList = require('./models/TemplateResponseList.json')
+const View = require('./models/View.json')
 
 const bodyParser = require('body-parser')
 // const jsonServer = require('json-server')
