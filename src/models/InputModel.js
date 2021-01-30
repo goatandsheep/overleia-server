@@ -1,11 +1,6 @@
 module.exports = {
-  id: 'InputModel',
-  type: 'object',
-  properties: {
-    file: {
-    },
+  file: {
+    type: String,
+    required: true,
   },
-  required: [
-    'file',
-  ],
 };

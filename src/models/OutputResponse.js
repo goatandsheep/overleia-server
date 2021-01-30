@@ -5,6 +5,7 @@ module.exports = {
     name: {
       type: 'string',
       faker: 'random.words',
+      required: true,
     },
     creationDate: {
       type: 'string',
@@ -18,6 +19,7 @@ module.exports = {
         type: 'string',
         faker: 'random.uuid',
       },
+      required: true,
     },
     status: {
       type: 'string',
@@ -30,6 +32,7 @@ module.exports = {
     templateId: {
       type: 'string',
       faker: 'random.uuid',
+      required: true,
     },
     updatedDate: {
       type: 'string',
