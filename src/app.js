@@ -35,7 +35,7 @@ const schema = new dynamoose.Schema({})
 
 // let router = jsonServer.router({})
 
-const mockRefs = [
+const modelRefs = [
   Element,
   ElementResponse,
   ElementListResponse,
@@ -108,7 +108,7 @@ app.use(/^(?!\/login).*$/, (req, res, next) => {
  * get info about a single job
  */
 app.get('/jobs/:uuid', (req, res) => {
-  const rand = jsf.generate(OutputResponse, mockRefs)
+  const rand = jsf.generate(OutputResponse, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -116,7 +116,7 @@ app.get('/jobs/:uuid', (req, res) => {
  * create job / apply template to file
  */
 app.post('/jobs', (req, res) => {
-  const elements = jsf.generate(OutputResponse, mockRefs)
+  const elements = jsf.generate(OutputResponse, modelRefs)
   let response = {
     elements
   }
@@ -127,7 +127,7 @@ app.post('/jobs', (req, res) => {
  * get jobs / outputs list
  */
 app.get('/jobs', (req, res) => {
-  const rand = jsf.generate(OutputResponseList, mockRefs)
+  const rand = jsf.generate(OutputResponseList, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -135,7 +135,7 @@ app.get('/jobs', (req, res) => {
  * create new template
  */
 app.post('/templates/new', (req, res) => {
-  const rand = jsf.generate(OutputResponseList, mockRefs)
+  const rand = jsf.generate(OutputResponseList, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -143,7 +143,7 @@ app.post('/templates/new', (req, res) => {
  * get template
  */
 app.get('/templates/:uuid', (req, res) => {
-  const rand = jsf.generate(TemplateResponse, mockRefs)
+  const rand = jsf.generate(TemplateResponse, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -151,7 +151,7 @@ app.get('/templates/:uuid', (req, res) => {
  * update template
  */
 app.patch('/templates/:uuid', (req, res) => {
-  const rand = jsf.generate(TemplateResponse, mockRefs)
+  const rand = jsf.generate(TemplateResponse, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -159,7 +159,7 @@ app.patch('/templates/:uuid', (req, res) => {
  * list templates
  */
 app.get('/templates', (req, res) => {
-  const rand = jsf.generate(TemplateResponseList, mockRefs)
+  const rand = jsf.generate(TemplateResponseList, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -167,7 +167,7 @@ app.get('/templates', (req, res) => {
  * list uploaded files
  */
 app.get('/file/list', (req, res) => {
-  const rand = jsf.generate(ElementListResponse, mockRefs)
+  const rand = jsf.generate(ElementListResponse, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -175,7 +175,7 @@ app.get('/file/list', (req, res) => {
  * upload file
  */
 app.post('/file', (req, res) => {
-  const rand = jsf.generate(ElementListResponse, mockRefs)
+  const rand = jsf.generate(ElementListResponse, modelRefs)
   res.status(200).jsonp(rand)
 })
 
@@ -183,7 +183,7 @@ app.post('/file', (req, res) => {
  * get a file
  */
 app.get('/file', (req, res) => {
-  const rand = jsf.generate(Element, mockRefs)
+  const rand = jsf.generate(Element, modelRefs)
   res.status(200).jsonp(rand)
 })
 
