@@ -1,13 +1,13 @@
 const dynamoose = require('dynamoose');
 
-const Element = require('./Element.json');
-const ElementResponse = require('./ElementResponse.json');
+const Element = require('./Element');
+const ElementResponse = require('./ElementResponse');
 
-const OutputSchema = require('./OutputResponse.json');
-const OutputResponse = require('./OutputResponse.json');
-const Template = require('./Template.json');
-const TemplateResponse = require('./TemplateResponse.json');
-const View = require('./View.json');
+const OutputSchema = require('./OutputResponse');
+const OutputResponse = require('./OutputResponse');
+const Template = require('./Template');
+const TemplateResponse = require('./TemplateResponse');
+const View = require('./View');
 
 const ElementModel = dynamoose.model('Element', new dynamoose.Schema(Element));
 const OutputModel = dynamoose.model('Output', new dynamoose.Schema(OutputSchema));

@@ -9,19 +9,19 @@ const services = require('./services');
 const models = require('./models');
 
 // This is all stuff for API Models
-const Element = require('./models/Element.json');
-const ElementResponse = require('./models/ElementResponse.json');
-const ElementListResponse = require('./models/ElementListResponse.json');
+const Element = require('./models/Element');
+const ElementResponse = require('./models/ElementResponse');
+const ElementListResponse = require('./models/ElementListResponse');
 
-const LoginModel = require('./models/LoginModel.json');
-const LoginResponseModel = require('./models/LoginResponseModel.json');
+const LoginModel = require('./models/LoginModel');
+const LoginResponseModel = require('./models/LoginResponseModel');
 
-const OutputResponse = require('./models/OutputResponse.json');
-const OutputResponseList = require('./models/OutputResponseList.json');
-const Template = require('./models/Template.json');
-const TemplateResponse = require('./models/TemplateResponse.json');
-const TemplateResponseList = require('./models/TemplateResponseList.json');
-const View = require('./models/View.json');
+const OutputResponse = require('./models/OutputResponse');
+const OutputResponseList = require('./models/OutputResponseList');
+const Template = require('./models/Template');
+const TemplateResponse = require('./models/TemplateResponse');
+const TemplateResponseList = require('./models/TemplateResponseList');
+const View = require('./models/View');
 
 // const jsonServer = require('json-server')
 
