@@ -2,19 +2,13 @@ const dynamoose = require('dynamoose');
 const express = require('express');
 
 const app = express();
-
-// const faker = require('faker')
-
-// const jsf = require('json-schema-faker')
-// jsf.extend('faker', () => faker)
-// jsf.locate('faker')
-
-// new
+const region = 'us-east-1';
 
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
 const services = require('./services');
+const models = require('./models');
 
+// This is all stuff for API Models
 const Element = require('./models/Element.json');
 const ElementResponse = require('./models/ElementResponse.json');
 const ElementListResponse = require('./models/ElementListResponse.json');
@@ -31,17 +25,21 @@ const View = require('./models/View.json');
 
 // const jsonServer = require('json-server')
 
-if (process.env.NODE_ENV === 'test') {
+if (['local', 'test'].contains(process.env.NODE_ENV)) {
   dynamoose.aws.ddb.local();
+  console.log('Connected to DynamoDB localhost');
+} else {
+  dynamoose.aws.sdk.config.update({
+    region,
+  });
+  console.log('Updated Dynamo Config');
 }
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const jsf = {}; // TODO: remove all jsfs
 
-// const app = jsonServer.create()
-
-// let router = jsonServer.router({})
-
-const modelRefs = [
+const modelRefs = {
   Element,
   ElementResponse,
   ElementListResponse,
@@ -51,27 +49,14 @@ const modelRefs = [
   TemplateResponse,
   TemplateResponseList,
   View,
-];
+};
 
-const SECRET_KEY = '123456789';
-const expiresIn = '1h';
-
-// Create a token from a payload
-function createToken(payload) {
-  return jwt.sign(payload, SECRET_KEY, { expiresIn });
+/**
+ * Checks user groups
+ */
+function verifyToken() {
+  return true;
 }
-
-// Verify the token
-function verifyToken(token) {
-  return jwt.verify(token, SECRET_KEY, (err, decode) => (decode !== undefined ? decode : err));
-}
-
-// Check if the user exists in database
-function isAuthenticated({ username, password }) {
-  return (username && password);
-  // return userdb.users.findIndex(user => user.username === 'user@example.com' && user.password === 'password') !== -1
-}
-// const middlewares = jsonServer.defaults()
 
 app.use((req, res, next) => {
   res.header('Allow');
