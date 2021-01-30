@@ -1,5 +1,5 @@
 module.exports = {
-  id: 'TemplateResponseList',
+  id: 'ElementListResponse',
   type: 'object',
   properties: {
     total: {
@@ -12,7 +12,7 @@ module.exports = {
       minItems: 13,
       maxItems: 35,
       items: {
-        $ref: 'TemplateResponse',
+        $ref: 'Element',
       },
     },
   },
