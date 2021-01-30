@@ -8,7 +8,7 @@
     "pack": "npm version minor && ./node_modules/.bin/claudia pack",
     "local": "node src/app.js",
     "start": "netlify-lambda serve src",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node tests",
     "build": "netlify-lambda build ./src",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "claudia": "^5.4.2",
+    "dynamodb-local": "0.0.31",
     "eslint": "^7.18.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",

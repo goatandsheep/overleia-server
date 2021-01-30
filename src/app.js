@@ -13,6 +13,8 @@ const app = express();
 
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const services = require('./services');
+
 const Element = require('./models/Element.json');
 const ElementResponse = require('./models/ElementResponse.json');
 const ElementListResponse = require('./models/ElementListResponse.json');
@@ -32,6 +34,8 @@ const View = require('./models/View.json');
 if (process.env.NODE_ENV === 'test') {
   dynamoose.aws.ddb.local();
 }
+
+const jsf = {}; // TODO: remove all jsfs
 
 // const app = jsonServer.create()
 
@@ -209,12 +213,12 @@ app.post('/login', (req, res) => {
     const message = 'Incorrect username or password';
     res.status(status).jsonp({ status, message });
   } else {
-    const access_token = createToken({ username, password });
+    const accessToken = createToken({ username, password });
     // res.cookie('access_token', access_token)
     // res.header('Set-Cookie', `access_token=${access_token}`)
-    res.header('Authorization', `Bearer ${access_token}`);
+    res.header('Authorization', `Bearer ${accessToken}`);
     // res.status(200).jsonp({ access_token })
-    const rand = Object.assign(jsf.generate(LoginResponseModel), { token: access_token });
+    const rand = Object.assign(jsf.generate(LoginResponseModel), { token: accessToken });
     res.status(200).jsonp(rand);
   }
 });
