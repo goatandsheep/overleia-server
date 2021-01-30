@@ -29,7 +29,9 @@ const bodyParser = require('body-parser')
 // const jsonServer = require('json-server')
 const jwt = require('jsonwebtoken')
 
-const schema = new dynamoose.Schema({})
+if (process.env.NODE_ENV === 'test'){
+  dynamoose.aws.ddb.local();
+}
 
 // const app = jsonServer.create()
 
