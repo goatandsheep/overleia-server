@@ -1,12 +1,13 @@
 'use strict'
-// const express = require('express')
-// const app = express()
+const dynamoose = require("dynamoose");
+const express = require('express')
+const app = express()
 
-const faker = require('faker')
+// const faker = require('faker')
 
-const jsf = require('json-schema-faker')
-jsf.extend('faker', () => faker)
-jsf.locate('faker')
+// const jsf = require('json-schema-faker')
+// jsf.extend('faker', () => faker)
+// jsf.locate('faker')
 
 // new
 
@@ -25,12 +26,14 @@ const TemplateResponseList = require('./mocks/TemplateResponseList.json')
 const View = require('./mocks/View.json')
 
 const bodyParser = require('body-parser')
-const jsonServer = require('json-server')
+// const jsonServer = require('json-server')
 const jwt = require('jsonwebtoken')
 
-const app = jsonServer.create()
+const schema = new dynamoose.Schema({})
 
-let router = jsonServer.router({})
+// const app = jsonServer.create()
+
+// let router = jsonServer.router({})
 
 const mockRefs = [
   Element,
@@ -62,7 +65,7 @@ function isAuthenticated({ username, password }) {
   return (username && password)
   // return userdb.users.findIndex(user => user.username === 'user@example.com' && user.password === 'password') !== -1
 }
-const middlewares = jsonServer.defaults()
+// const middlewares = jsonServer.defaults()
 
 app.use((req, res, next) => {
   res.header('Allow')
