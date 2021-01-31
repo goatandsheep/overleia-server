@@ -16,7 +16,7 @@ const {
 
 // const jsonServer = require('json-server')
 
-if (['local', 'test'].contains(process.env.NODE_ENV)) {
+if (['local', 'test'].includes(process.env.NODE_ENV)) {
   dynamoose.aws.ddb.local();
   console.log('Connected to DynamoDB localhost');
 } else {
