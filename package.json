@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "node app",
+    "dev": "set NODE_ENV=development&& node app",
     "pack": "npm version minor && ./node_modules/.bin/claudia pack",
     "local": "node src/app.js",
     "start": "netlify-lambda serve src",

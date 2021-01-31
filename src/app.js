@@ -16,13 +16,13 @@ const {
 
 // const jsonServer = require('json-server')
 
+dynamoose.aws.sdk.config.update({
+  region,
+});
 if (['development', 'test'].includes(process.env.NODE_ENV)) {
   dynamoose.aws.ddb.local();
   console.log('Connected to DynamoDB localhost');
 } else {
-  dynamoose.aws.sdk.config.update({
-    region,
-  });
   console.log('Updated Dynamo Config');
 }
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -70,6 +70,7 @@ app.use(/^(?!\/login).*$/, (req, res, next) => {
   //   const message = 'Error: access_token is not valid';
   //   res.status(status).json({ status, message });
   // }
+  // TODO: get user object and return
   verifyToken();
   next();
 });
@@ -79,7 +80,7 @@ app.use(/^(?!\/login).*$/, (req, res, next) => {
  */
 app.get('/jobs/:uuid', async (req, res) => {
   try {
-    const job = await OutputModel.get({ uuid: req.uuid });
+    const job = await OutputModel.get({ uuid: req.params.uuid });
     res.status(200).jsonp(job);
   } catch (err) {
     console.error('get/jobs/uuid', err);
@@ -92,7 +93,7 @@ app.get('/jobs/:uuid', async (req, res) => {
  */
 app.post('/jobs', async (req, res) => {
   const uuid = uuidv4();
-  const job = new OutputModel({ ...req, uuid });
+  const job = new OutputModel({ ...req.body, uuid });
   try {
     await job.save();
     res.status(200).jsonp(job);
@@ -107,7 +108,7 @@ app.post('/jobs', async (req, res) => {
  */
 app.get('/jobs', async (req, res) => {
   try {
-    const jobs = await OutputModel.query({ uuid: req.uuid }).exec();
+    const jobs = await OutputModel.scan().all();
     res.status(200).jsonp(jobs);
   } catch (err) {
     console.error('get/jobs', err);
@@ -120,7 +121,7 @@ app.get('/jobs', async (req, res) => {
  */
 app.post('/templates/new', async (req, res) => {
   const uuid = uuidv4();
-  const template = new TemplateModel({ ...req, uuid });
+  const template = new TemplateModel({ ...req.body, uuid });
   try {
     await template.save();
     res.status(200).jsonp(template);
@@ -135,7 +136,7 @@ app.post('/templates/new', async (req, res) => {
  */
 app.get('/templates/:uuid', (req, res) => {
   try {
-    const template = TemplateModel.get({ uuid: req.uuid });
+    const template = TemplateModel.get({ uuid: req.params.uuid });
     res.status(200).jsonp(template);
   } catch (err) {
     console.error('get/templates/uuid', err);
@@ -148,7 +149,7 @@ app.get('/templates/:uuid', (req, res) => {
  */
 app.patch('/templates/:uuid', async (req, res) => {
   try {
-    let template = TemplateModel.get({ uuid: req.uuid });
+    let template = TemplateModel.get({ uuid: req.params.uuid });
     template = Object.assign(template, req);
     await template.save();
     res.status(200).jsonp(template);
@@ -163,7 +164,7 @@ app.patch('/templates/:uuid', async (req, res) => {
  */
 app.get('/templates', async (req, res) => {
   try {
-    const templates = await TemplateModel({ uuid: req.uuid });
+    const templates = await TemplateModel({ uuid: req.params.uuid });
     res.status(200).jsonp(templates);
   } catch (err) {
     console.error('get/templates', err);
@@ -176,10 +177,27 @@ app.get('/templates', async (req, res) => {
  */
 app.get('/file/list', async (req, res) => {
   try {
-    const files = await InputModel.query().exec();
-    res.status(200).jsonp(files);
+    const files = await InputModel.scan().exec();
+    if (files.length) {
+      res.status(200).jsonp(files);
+    } else {
+      res.status(400).send('No files found');
+    }
   } catch (err) {
     console.error('get/file/list', err);
+    res.status(500).send('Bad Request');
+  }
+});
+
+/**
+ * get template
+ */
+app.get('/file/:uuid', async (req, res) => {
+  try {
+    const file = InputModel.get({ uuid: req.params.uuid });
+    res.status(200).jsonp(file);
+  } catch (err) {
+    console.error('get/file/uuid', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -188,10 +206,9 @@ app.get('/file/list', async (req, res) => {
  * upload file
  */
 app.post('/file', async (req, res) => {
-  const uuid = uuidv4();
-  const file = new InputModel({ ...req, uuid });
   try {
-    await file.save();
+    const uuid = uuidv4();
+    const file = await new InputModel({ file: req.body.file, uuid });
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
@@ -200,14 +217,14 @@ app.post('/file', async (req, res) => {
 });
 
 /**
- * get a file
+ * get a element
  */
-app.get('/file', (req, res) => {
+app.get('/element/:uuid', async (req, res) => {
   try {
-    const file = ElementModel.get({ uuid: req.uuid });
-    res.status(200).jsonp(file);
+    const element = await ElementModel.get({ uuid: req.params.uuid });
+    res.status(200).jsonp(element);
   } catch (err) {
-    console.error('get/file', err);
+    console.error('get/element', err);
     res.status(500).send('Bad Request');
   }
 });

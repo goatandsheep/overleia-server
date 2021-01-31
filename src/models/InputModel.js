@@ -3,4 +3,7 @@ module.exports = {
     type: String,
     required: true,
   },
+  uuid: {
+    type: String,
+  },
 };
