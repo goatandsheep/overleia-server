@@ -103,7 +103,7 @@ app.post('/jobs', async (req, res) => {
  */
 app.get('/jobs', async (req, res) => {
   try {
-    const jobs = await OutputModel.query({ uuid: req.uuid });
+    const jobs = await OutputModel.query({ uuid: req.uuid }).exec();
     res.status(200).jsonp(jobs);
   } catch (err) {
     res.status(500).send('Bad Request');
@@ -167,7 +167,7 @@ app.get('/templates', async (req, res) => {
  */
 app.get('/file/list', async (req, res) => {
   try {
-    const files = await InputModel.query();
+    const files = await InputModel.query().exec();
     res.status(200).jsonp(files);
   } catch (err) {
     res.status(500).send('Bad Request');
