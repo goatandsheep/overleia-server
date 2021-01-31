@@ -1,6 +1,6 @@
 module.exports = {
   elementType: {
-    type: 'string',
+    type: String,
     enum: [
       'video',
       'music',
@@ -8,24 +8,22 @@ module.exports = {
     required: true,
   },
   elementName: {
-    type: 'string',
+    type: String,
     faker: 'system.fileName',
     required: true,
   },
   uuid: {
-    type: 'string',
+    type: String,
     faker: 'random.uuid',
   },
   creationDate: {
-    type: 'string',
-    faker: 'date.past',
+    type: Date,
   },
   updatedDate: {
-    type: 'string',
-    faker: 'date.past',
+    type: Date,
   },
   status: {
-    type: 'string',
+    type: String,
     enum: [
       'In Progress',
       'Cancelled',

@@ -20,7 +20,8 @@
     "body-parser": "^1.18.3",
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "claudia": "^5.12.0",

@@ -1,27 +1,18 @@
 const dynamoose = require('dynamoose');
 const express = require('express');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const region = 'us-east-1';
 
 const bodyParser = require('body-parser');
-const services = require('./services');
-const models = require('./models');
-
-// This is all stuff for API Models
-const Element = require('./models/Element');
-const ElementResponse = require('./models/ElementResponse');
-const ElementListResponse = require('./models/ElementListResponse');
-
-const LoginModel = require('./models/LoginModel');
-const LoginResponseModel = require('./models/LoginResponseModel');
-
-const OutputResponse = require('./models/OutputResponse');
-const OutputResponseList = require('./models/OutputResponseList');
-const Template = require('./models/Template');
-const TemplateResponse = require('./models/TemplateResponse');
-const TemplateResponseList = require('./models/TemplateResponseList');
-const View = require('./models/View');
+// const services = require('./services');
+const {
+  ElementModel,
+  InputModel,
+  OutputModel,
+  TemplateModel,
+} = require('./models');
 
 // const jsonServer = require('json-server')
 
@@ -36,20 +27,6 @@ if (['local', 'test'].contains(process.env.NODE_ENV)) {
 }
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-const jsf = {}; // TODO: remove all jsfs
-
-const modelRefs = {
-  Element,
-  ElementResponse,
-  ElementListResponse,
-  OutputResponse,
-  OutputResponseList,
-  Template,
-  TemplateResponse,
-  TemplateResponseList,
-  View,
-};
 
 /**
  * Checks user groups
@@ -99,114 +76,131 @@ app.use(/^(?!\/login).*$/, (req, res, next) => {
  * get info about a single job
  */
 app.get('/jobs/:uuid', (req, res) => {
-  const rand = jsf.generate(OutputResponse, modelRefs);
-  res.status(200).jsonp(rand);
+  try {
+    const job = OutputModel.get({ uuid: req.uuid });
+    res.status(200).jsonp(job);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * create job / apply template to file
  */
-app.post('/jobs', (req, res) => {
-  const elements = jsf.generate(OutputResponse, modelRefs);
-  const response = {
-    elements,
-  };
-  res.status(200).jsonp(response);
+app.post('/jobs', async (req, res) => {
+  const uuid = uuidv4();
+  const job = new OutputModel({ ...req, uuid });
+  try {
+    await job.save();
+    res.status(200).jsonp(job);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * get jobs / outputs list
  */
-app.get('/jobs', (req, res) => {
-  const rand = jsf.generate(OutputResponseList, modelRefs);
-  res.status(200).jsonp(rand);
+app.get('/jobs', async (req, res) => {
+  try {
+    const jobs = await OutputModel.query({ uuid: req.uuid });
+    res.status(200).jsonp(jobs);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * create new template
  */
-app.post('/templates/new', (req, res) => {
-  const rand = jsf.generate(OutputResponseList, modelRefs);
-  res.status(200).jsonp(rand);
+app.post('/templates/new', async (req, res) => {
+  const uuid = uuidv4();
+  const template = new TemplateModel({ ...req, uuid });
+  try {
+    await template.save();
+    res.status(200).jsonp(template);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * get template
  */
 app.get('/templates/:uuid', (req, res) => {
-  const rand = jsf.generate(TemplateResponse, modelRefs);
-  res.status(200).jsonp(rand);
+  try {
+    const template = TemplateModel.get({ uuid: req.uuid });
+    res.status(200).jsonp(template);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * update template
  */
-app.patch('/templates/:uuid', (req, res) => {
-  const rand = jsf.generate(TemplateResponse, modelRefs);
-  res.status(200).jsonp(rand);
+app.patch('/templates/:uuid', async (req, res) => {
+  try {
+    let template = TemplateModel.get({ uuid: req.uuid });
+    template = Object.assign(template, req);
+    await template.save();
+    res.status(200).jsonp(template);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * list templates
  */
-app.get('/templates', (req, res) => {
-  const rand = jsf.generate(TemplateResponseList, modelRefs);
-  res.status(200).jsonp(rand);
+app.get('/templates', async (req, res) => {
+  try {
+    const templates = await TemplateModel({ uuid: req.uuid });
+    res.status(200).jsonp(templates);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * list uploaded files
  */
-app.get('/file/list', (req, res) => {
-  const rand = jsf.generate(ElementListResponse, modelRefs);
-  res.status(200).jsonp(rand);
+app.get('/file/list', async (req, res) => {
+  try {
+    const files = await InputModel.query();
+    res.status(200).jsonp(files);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * upload file
  */
-app.post('/file', (req, res) => {
-  const rand = jsf.generate(ElementListResponse, modelRefs);
-  res.status(200).jsonp(rand);
+app.post('/file', async (req, res) => {
+  const uuid = uuidv4();
+  const file = new InputModel({ ...req, uuid });
+  try {
+    await file.save();
+    res.status(200).jsonp(file);
+  } catch (err) {
+    res.status(500).send('Bad Request');
+  }
 });
 
 /**
  * get a file
  */
 app.get('/file', (req, res) => {
-  const rand = jsf.generate(Element, modelRefs);
-  res.status(200).jsonp(rand);
-});
-
-// app.post('/login', (req, res) => {
-//   const rand = jsf.generate(LoginResponseModel)
-//   res.status(200).jsonp(rand)
-// })
-
-// keep at the bottom
-
-app.post('/auth/logout', (req, res) => {
-  const rand = jsf.generate(LoginModel);
-  res.status(200).jsonp(rand);
-});
-
-// app.post('/auth/login', (req, res) => {
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  if (isAuthenticated({ username, password }) === false) {
-    const status = 401;
-    const message = 'Incorrect username or password';
-    res.status(status).jsonp({ status, message });
-  } else {
-    const accessToken = createToken({ username, password });
-    // res.cookie('access_token', access_token)
-    // res.header('Set-Cookie', `access_token=${access_token}`)
-    res.header('Authorization', `Bearer ${accessToken}`);
-    // res.status(200).jsonp({ access_token })
-    const rand = Object.assign(jsf.generate(LoginResponseModel), { token: accessToken });
-    res.status(200).jsonp(rand);
+  try {
+    const file = ElementModel.get({ uuid: req.uuid });
+    res.status(200).jsonp(file);
+  } catch (err) {
+    res.status(500).send('Bad Request');
   }
 });
+
+// keep at the bottom
 
 app.get('/*', (req, res) => {
   res.status(404).send('Route not found');

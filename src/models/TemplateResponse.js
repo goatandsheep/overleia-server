@@ -9,24 +9,24 @@ module.exports = {
     maxItems: 4,
     items: {
       height: {
-        type: 'integer',
+        type: Number,
         minimum: 80,
         maximum: 300,
         required: true,
       },
       width: {
-        type: 'integer',
+        type: Number,
         minimum: 100,
         maximum: 500,
       },
       x: {
-        type: 'integer',
+        type: Number,
         minimum: 10,
         maximum: 300,
         required: true,
       },
       y: {
-        type: 'integer',
+        type: Number,
         minimum: 10,
         maximum: 200,
         required: true,
@@ -35,19 +35,15 @@ module.exports = {
     required: true,
   },
   name: {
-    type: 'string',
+    type: String,
     faker: 'random.words',
     required: true,
   },
   width: {
-    enum: [
-      1280,
-      1920,
-      3840,
-    ],
+    type: Number,
   },
   uuid: {
-    type: 'string',
+    type: String,
     faker: 'random.uuid',
   },
 };
