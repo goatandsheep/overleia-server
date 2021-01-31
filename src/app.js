@@ -16,7 +16,7 @@ const {
 
 // const jsonServer = require('json-server')
 
-if (['local', 'test'].includes(process.env.NODE_ENV)) {
+if (['development', 'test'].includes(process.env.NODE_ENV)) {
   dynamoose.aws.ddb.local();
   console.log('Connected to DynamoDB localhost');
 } else {
@@ -55,31 +55,34 @@ app.options('/*', (req, res) => {
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
 app.use(/^(?!\/login).*$/, (req, res, next) => {
-  if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
-    const status = 401;
-    const message = 'Bad authorization header';
-    console.log(req.headers.authorization);
-    res.status(status).json({ status, message });
-    return;
-  }
-  try {
-    verifyToken(req.headers.authorization.split(' ')[1]);
-    next();
-  } catch (err) {
-    const status = 401;
-    const message = 'Error: access_token is not valid';
-    res.status(status).json({ status, message });
-  }
+  // if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
+  //   const status = 401;
+  //   const message = 'Bad authorization header';
+  //   console.log(req.headers.authorization);
+  //   res.status(status).json({ status, message });
+  //   return;
+  // }
+  // try {
+  //   verifyToken(req.headers.authorization.split(' ')[1]);
+  //   next();
+  // } catch (err) {
+  //   const status = 401;
+  //   const message = 'Error: access_token is not valid';
+  //   res.status(status).json({ status, message });
+  // }
+  verifyToken();
+  next();
 });
 
 /**
  * get info about a single job
  */
-app.get('/jobs/:uuid', (req, res) => {
+app.get('/jobs/:uuid', async (req, res) => {
   try {
-    const job = OutputModel.get({ uuid: req.uuid });
+    const job = await OutputModel.get({ uuid: req.uuid });
     res.status(200).jsonp(job);
   } catch (err) {
+    console.error('get/jobs/uuid', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -94,6 +97,7 @@ app.post('/jobs', async (req, res) => {
     await job.save();
     res.status(200).jsonp(job);
   } catch (err) {
+    console.error('post/jobs', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -106,6 +110,7 @@ app.get('/jobs', async (req, res) => {
     const jobs = await OutputModel.query({ uuid: req.uuid }).exec();
     res.status(200).jsonp(jobs);
   } catch (err) {
+    console.error('get/jobs', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -120,6 +125,7 @@ app.post('/templates/new', async (req, res) => {
     await template.save();
     res.status(200).jsonp(template);
   } catch (err) {
+    console.error('post/templates/new', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -132,6 +138,7 @@ app.get('/templates/:uuid', (req, res) => {
     const template = TemplateModel.get({ uuid: req.uuid });
     res.status(200).jsonp(template);
   } catch (err) {
+    console.error('get/templates/uuid', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -146,6 +153,7 @@ app.patch('/templates/:uuid', async (req, res) => {
     await template.save();
     res.status(200).jsonp(template);
   } catch (err) {
+    console.error('patch/templates/uuid', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -158,6 +166,7 @@ app.get('/templates', async (req, res) => {
     const templates = await TemplateModel({ uuid: req.uuid });
     res.status(200).jsonp(templates);
   } catch (err) {
+    console.error('get/templates', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -170,6 +179,7 @@ app.get('/file/list', async (req, res) => {
     const files = await InputModel.query().exec();
     res.status(200).jsonp(files);
   } catch (err) {
+    console.error('get/file/list', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -184,6 +194,7 @@ app.post('/file', async (req, res) => {
     await file.save();
     res.status(200).jsonp(file);
   } catch (err) {
+    console.error('post/file', err);
     res.status(500).send('Bad Request');
   }
 });
@@ -196,6 +207,7 @@ app.get('/file', (req, res) => {
     const file = ElementModel.get({ uuid: req.uuid });
     res.status(200).jsonp(file);
   } catch (err) {
+    console.error('get/file', err);
     res.status(500).send('Bad Request');
   }
 });
