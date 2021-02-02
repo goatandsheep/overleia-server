@@ -208,7 +208,8 @@ app.get('/file/:uuid', async (req, res) => {
 app.post('/file', async (req, res) => {
   try {
     const uuid = uuidv4();
-    const file = await new InputModel({ file: req.body.file, uuid });
+    const file = new InputModel({ file: req.body.file, uuid });
+    await file.save();
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
