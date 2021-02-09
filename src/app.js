@@ -82,7 +82,7 @@ app.get('/jobs/:id', async (req, res) => {
  */
 app.post('/jobs', async (req, res) => {
   const id = uuidv4();
-  const job = await OutputModel.create({ ...req.body, id });
+  const job = await OutputModel.create({ id, ...req.body });
   try {
     await job.save();
     res.status(200).jsonp(job);
@@ -110,7 +110,7 @@ app.get('/jobs', async (req, res) => {
  */
 app.post('/templates/new', async (req, res) => {
   const id = uuidv4();
-  const template = await TemplateModel.create({ ...req.body, id });
+  const template = await TemplateModel.create({ id, ...req.body });
   try {
     await template.save();
     res.status(200).jsonp(template);
@@ -196,7 +196,7 @@ app.get('/file/:id', async (req, res) => {
  */
 app.post('/file', async (req, res) => {
   try {
-    const id = uuidv4();
+    const id = req.body.id || uuidv4();
     const file = await InputModel.create({ file: req.body.file, id });
     res.status(200).jsonp(file);
   } catch (err) {

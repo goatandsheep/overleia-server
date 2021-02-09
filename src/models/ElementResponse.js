@@ -17,11 +17,11 @@ module.exports = {
   },
   creationDate: {
     type: Date,
-    default: Date,
+    default: () => new Date(),
   },
   updatedDate: {
     type: Date,
-    default: Date,
+    default: () => new Date(),
   },
   status: {
     type: String,

@@ -12,11 +12,13 @@ module.exports = {
   },
   creationDate: {
     type: Date,
-    default: Date,
+    default: () => new Date(),
   },
   inputs: {
     type: Array,
+    schema: [String],
     required: true,
+    validate: (val) => val.length > 0,
   },
   status: {
     type: String,
@@ -34,6 +36,6 @@ module.exports = {
   },
   updatedDate: {
     type: Date,
-    default: Date,
+    default: () => new Date(),
   },
 };
