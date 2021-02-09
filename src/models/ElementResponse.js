@@ -1,10 +1,13 @@
+const uuid = require('uuid');
+
 module.exports = {
+  id: {
+    hashKey: true,
+    type: Number,
+    default: uuid.v4,
+  },
   elementType: {
     type: String,
-    enum: [
-      'video',
-      'music',
-    ],
     required: true,
   },
   elementName: {
@@ -12,15 +15,13 @@ module.exports = {
     faker: 'system.fileName',
     required: true,
   },
-  uuid: {
-    type: String,
-    faker: 'random.uuid',
-  },
   creationDate: {
     type: Date,
+    default: () => new Date(),
   },
   updatedDate: {
     type: Date,
+    default: () => new Date(),
   },
   status: {
     type: String,
@@ -29,5 +30,6 @@ module.exports = {
       'Cancelled',
       'Complete',
     ],
+    default: 'In Progress',
   },
 };

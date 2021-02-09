@@ -1,21 +1,24 @@
+const uuid = require('uuid');
+
 module.exports = {
+  id: {
+    type: String,
+    hashKey: true,
+    default: uuid.v4,
+  },
   name: {
     type: String,
-    faker: 'random.words',
     required: true,
   },
   creationDate: {
     type: Date,
+    default: () => new Date(),
   },
   inputs: {
-    type: 'array',
-    minItems: 1,
-    maxItems: 4,
-    items: {
-      type: String,
-      faker: 'random.uuid',
-    },
+    type: Array,
+    schema: [String],
     required: true,
+    validate: (val) => val.length > 0,
   },
   status: {
     type: String,
@@ -24,17 +27,15 @@ module.exports = {
       'Cancelled',
       'Complete',
     ],
+    rangeKey: true,
+    default: 'In Progress',
   },
   templateId: {
     type: String,
-    faker: 'random.uuid',
     required: true,
   },
   updatedDate: {
     type: Date,
-  },
-  uuid: {
-    type: String,
-    faker: 'random.uuid',
+    default: () => new Date(),
   },
 };
