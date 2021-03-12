@@ -82,8 +82,8 @@ app.get('/jobs/:id', async (req, res) => {
  */
 app.post('/jobs', async (req, res) => {
   const id = uuidv4();
-  const job = await OutputModel.create({ id, ...req.body });
   try {
+    const job = await OutputModel.create({ id, ...req.body });
     await job.save();
     res.status(200).jsonp(job);
   } catch (err) {
@@ -110,8 +110,8 @@ app.get('/jobs', async (req, res) => {
  */
 app.post('/templates/new', async (req, res) => {
   const id = uuidv4();
-  const template = await TemplateModel.create({ id, ...req.body });
   try {
+    const template = await TemplateModel.create({ id, ...req.body });
     await template.save();
     res.status(200).jsonp(template);
   } catch (err) {
