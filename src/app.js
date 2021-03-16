@@ -125,7 +125,7 @@ app.post('/templates/new', async (req, res) => {
  */
 app.get('/templates/:id', async (req, res) => {
   try {
-    const template = TemplateModel.get({ id: req.params.id });
+    const template = await TemplateModel.get({ id: req.params.id });
     res.status(200).jsonp(template);
   } catch (err) {
     console.error('get/templates/id', err);
@@ -138,7 +138,7 @@ app.get('/templates/:id', async (req, res) => {
  */
 app.patch('/templates/:id', async (req, res) => {
   try {
-    let template = TemplateModel.get({ id: req.params.id });
+    let template = await TemplateModel.get({ id: req.params.id });
     template = Object.assign(template, req);
     await template.save();
     res.status(200).jsonp(template);
@@ -221,6 +221,7 @@ app.get('/element/:id', async (req, res) => {
 // keep at the bottom
 
 app.get('/*', (req, res) => {
+  console.log('404', req);
   res.status(404).send('Route not found');
 });
 

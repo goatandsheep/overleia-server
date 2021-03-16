@@ -16,7 +16,7 @@
   "author": "Kemal Ahmed",
   "license": "ISC",
   "dependencies": {
-    "aws-serverless-express": "^3.3.6",
+    "@vendia/serverless-express": "^4.3.4",
     "body-parser": "^1.18.3",
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
