@@ -7,7 +7,7 @@
     "dev": "set NODE_ENV=development&& node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
     "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
     "test": "node tests",
-    "pack": "Compress-Archive -Path . -DestinationPath dist/test.zip",
+    "pack": "Compress-Archive -Path . -DestinationPath ./dist/test.zip",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },
