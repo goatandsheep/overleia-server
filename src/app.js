@@ -1,6 +1,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
+require('dotenv-extended').load();
 
 const app = express();
 
@@ -21,9 +22,14 @@ function verifyToken() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+let corsSettings = {
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+};
+corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development' ? {} : {
+  origin: process.env.SERVER_URL,
+});
+app.use(cors(corsSettings));
 app.options('*', cors());
-
-app.use(process.env.NODE_ENV === 'development' ? '*' : '<app_url_in_prod>', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
 app.use(/^(?!\/login).*$/, (req, res, next) => {
@@ -179,7 +185,6 @@ app.get('/file/:id', async (req, res) => {
  */
 app.post('/file', async (req, res) => {
   try {
-    console.error('post/file req', req.body);
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
     const file = await InputModel.create({ file: req.body.file, id });
