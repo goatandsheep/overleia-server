@@ -1,10 +1,10 @@
-const dynamoose = require('dynamoose');
+// const dynamoose = require('dynamoose');
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
+const cors = require('cors');
 
 const app = express();
 
-const bodyParser = require('body-parser');
 // const services = require('./services');
 const {
   ElementModel,
@@ -14,8 +14,8 @@ const {
 } = require('./models');
 
 // const jsonServer = require('json-server')
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors);
 
 /**
  * Checks user groups
@@ -35,8 +35,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
 
 app.options('/*', (req, res) => {
   res.status(200).jsonp({});
