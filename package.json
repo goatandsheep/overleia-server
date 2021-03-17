@@ -4,34 +4,32 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "set NODE_ENV=development&& node app",
-    "pack": "npm version minor && ./node_modules/.bin/claudia pack",
-    "local": "node src/app.js",
-    "start": "netlify-lambda serve src",
+    "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
+    "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
     "test": "node tests",
-    "build": "netlify-lambda build ./src",
+    "pack": "Compress-Archive -Path . -DestinationPath ./dist/test.zip",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },
   "author": "Kemal Ahmed",
   "license": "ISC",
   "dependencies": {
-    "aws-serverless-express": "^3.3.6",
-    "body-parser": "^1.18.3",
+    "@vendia/serverless-express": "^4.3.4",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv-extended": "^2.9.0",
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "claudia": "^5.12.0",
+    "cross-env": "^7.0.3",
     "dynamodb-local": "0.0.31",
     "eslint": "^7.18.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
-    "jest": "^26.6.3",
-    "netlify-lambda": "^1.6.3"
+    "jest": "^26.6.3"
   },
   "eslint": {
     "extends": "eslint:recommended"

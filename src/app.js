@@ -1,21 +1,16 @@
-const dynamoose = require('dynamoose');
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
+const cors = require('cors');
+require('dotenv-extended').load();
 
 const app = express();
 
-const bodyParser = require('body-parser');
-// const services = require('./services');
 const {
   ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,
 } = require('./models');
-
-// const jsonServer = require('json-server')
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 /**
  * Checks user groups
@@ -24,23 +19,17 @@ function verifyToken() {
   return true;
 }
 
-app.use((req, res, next) => {
-  res.header('Allow');
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  res.header('Access-Control-Request-Headers', 'Origin, Content-Type, X-Auth-Token, Authorization, Set-Cookie');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Request-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Content-Type', 'application/javascript');
-  next();
-});
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-app.options('/*', (req, res) => {
-  res.status(200).jsonp({});
+let corsSettings = {
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+};
+corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development' ? {} : {
+  origin: process.env.SERVER_URL,
 });
+app.use(cors(corsSettings));
+app.options('*', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
 app.use(/^(?!\/login).*$/, (req, res, next) => {
@@ -82,8 +71,8 @@ app.get('/jobs/:id', async (req, res) => {
  */
 app.post('/jobs', async (req, res) => {
   const id = uuidv4();
-  const job = await OutputModel.create({ id, ...req.body });
   try {
+    const job = await OutputModel.create({ id, ...req.body });
     await job.save();
     res.status(200).jsonp(job);
   } catch (err) {
@@ -110,8 +99,8 @@ app.get('/jobs', async (req, res) => {
  */
 app.post('/templates/new', async (req, res) => {
   const id = uuidv4();
-  const template = await TemplateModel.create({ id, ...req.body });
   try {
+    const template = await TemplateModel.create({ id, ...req.body });
     await template.save();
     res.status(200).jsonp(template);
   } catch (err) {
@@ -125,7 +114,7 @@ app.post('/templates/new', async (req, res) => {
  */
 app.get('/templates/:id', async (req, res) => {
   try {
-    const template = TemplateModel.get({ id: req.params.id });
+    const template = await TemplateModel.get({ id: req.params.id });
     res.status(200).jsonp(template);
   } catch (err) {
     console.error('get/templates/id', err);
@@ -138,7 +127,7 @@ app.get('/templates/:id', async (req, res) => {
  */
 app.patch('/templates/:id', async (req, res) => {
   try {
-    let template = TemplateModel.get({ id: req.params.id });
+    let template = await TemplateModel.get({ id: req.params.id });
     template = Object.assign(template, req);
     await template.save();
     res.status(200).jsonp(template);
@@ -197,6 +186,7 @@ app.get('/file/:id', async (req, res) => {
 app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
+    console.log('body', req.body);
     const file = await InputModel.create({ file: req.body.file, id });
     res.status(200).jsonp(file);
   } catch (err) {
@@ -220,7 +210,8 @@ app.get('/element/:id', async (req, res) => {
 
 // keep at the bottom
 
-app.get('/*', (req, res) => {
+app.all('/*', (req, res) => {
+  console.log('404', req);
   res.status(404).send('Route not found');
 });
 
