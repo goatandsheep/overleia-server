@@ -1,5 +1,5 @@
 {
-  "name": "mock-server",
+  "name": "overleia-server",
   "version": "0.13.0",
   "description": "",
   "main": "app.js",
