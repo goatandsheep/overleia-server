@@ -2,10 +2,9 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 
 const app = express();
-
 // const services = require('./services');
 const {
   ElementModel,
@@ -23,20 +22,20 @@ function verifyToken() {
   return true;
 }
 
-app.use((req, res, next) => {
-  res.header('Allow');
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  res.header('Access-Control-Request-Headers', 'Origin, Content-Type, X-Auth-Token, Authorization, Set-Cookie');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Request-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Content-Type', 'application/json');
-  next();
-});
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-// app.use(express.urlencoded());
-// app.use(express.json());
+// app.use((req, res, next) => {
+//   res.header('Allow');
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', '*');
+//   res.header('Access-Control-Request-Headers', 'Origin, Content-Type, X-Auth-Token, Authorization, Set-Cookie');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+//   res.header('Access-Control-Request-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+//   res.header('Content-Type', 'application/json');
+//   next();
+// });
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+app.use(express.urlencoded());
+app.use(express.json());
 
 app.options('*', cors());
 app.use(cors());
