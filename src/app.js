@@ -1,19 +1,15 @@
-// const dynamoose = require('dynamoose');
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
-// const bodyParser = require('body-parser');
 
 const app = express();
-// const services = require('./services');
+
 const {
   ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,
 } = require('./models');
-
-// const jsonServer = require('json-server')
 
 /**
  * Checks user groups
@@ -22,23 +18,12 @@ function verifyToken() {
   return true;
 }
 
-// app.use((req, res, next) => {
-//   res.header('Allow');
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Headers', '*');
-//   res.header('Access-Control-Request-Headers', 'Origin, Content-Type, X-Auth-Token, Authorization, Set-Cookie');
-//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//   res.header('Access-Control-Request-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//   res.header('Content-Type', 'application/json');
-//   next();
-// });
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.options('*', cors());
-app.use(cors());
+
+app.use(process.env.NODE_ENV === 'development' ? '*' : '<app_url_in_prod>', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
 app.use(/^(?!\/login).*$/, (req, res, next) => {
@@ -196,6 +181,7 @@ app.post('/file', async (req, res) => {
   try {
     console.error('post/file req', req.body);
     const id = req.body.id || uuidv4();
+    console.log('body', req.body);
     const file = await InputModel.create({ file: req.body.file, id });
     res.status(200).jsonp(file);
   } catch (err) {

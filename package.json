@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "set NODE_ENV=development&& node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
+    "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
     "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
     "test": "node tests",
     "pack": "Compress-Archive -Path . -DestinationPath ./dist/test.zip",
@@ -22,6 +22,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "dynamodb-local": "0.0.31",
     "eslint": "^7.18.0",
     "eslint-config-airbnb": "^18.2.1",
