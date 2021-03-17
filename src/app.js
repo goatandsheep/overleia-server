@@ -2,6 +2,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -14,8 +15,6 @@ const {
 } = require('./models');
 
 // const jsonServer = require('json-server')
-// app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors);
 
 /**
  * Checks user groups
@@ -31,16 +30,16 @@ app.use((req, res, next) => {
   res.header('Access-Control-Request-Headers', 'Origin, Content-Type, X-Auth-Token, Authorization, Set-Cookie');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Request-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Content-Type', 'application/javascript');
+  res.header('Content-Type', 'application/json');
   next();
 });
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+// app.use(express.urlencoded());
+// app.use(express.json());
 
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
-
-app.options('/*', (req, res) => {
-  res.status(200).jsonp({});
-});
+app.options('*', cors());
+app.use(cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
 app.use(/^(?!\/login).*$/, (req, res, next) => {
@@ -196,6 +195,7 @@ app.get('/file/:id', async (req, res) => {
  */
 app.post('/file', async (req, res) => {
   try {
+    console.error('post/file req', req.body);
     const id = req.body.id || uuidv4();
     const file = await InputModel.create({ file: req.body.file, id });
     res.status(200).jsonp(file);
@@ -220,7 +220,7 @@ app.get('/element/:id', async (req, res) => {
 
 // keep at the bottom
 
-app.get('/*', (req, res) => {
+app.all('/*', (req, res) => {
   console.log('404', req);
   res.status(404).send('Route not found');
 });
