@@ -72,9 +72,10 @@ app.get('/jobs/:id', async (req, res) => {
 app.post('/jobs', async (req, res) => {
   const id = uuidv4();
   try {
-    const job = await OutputModel.create({ id, ...req.body });
+    const jobOut = { id, ...req.body };
+    const job = await OutputModel.create(jobOut);
     await job.save();
-    res.status(200).jsonp(job);
+    res.status(200).jsonp(jobOut);
   } catch (err) {
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');
