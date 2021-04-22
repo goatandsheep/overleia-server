@@ -22,13 +22,14 @@ function verifyToken() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-let corsSettings = {
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-};
-corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development' ? {} : {
-  origin: process.env.SERVER_URL,
-});
-app.use(cors(corsSettings));
+// let corsSettings = {
+//   exposedHeaders: ['Content-Range', 'X-Content-Range'],
+// };
+// corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development' ? {} : {
+//   origin: process.env.SERVER_URL,
+// });
+
+app.use(cors({ credentials: true, origin: true }));
 app.options('*', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
