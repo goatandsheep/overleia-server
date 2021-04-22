@@ -6,7 +6,7 @@ dynamoose.aws.sdk.config.update({
   region,
 });
 
-if (['development', 'test'].includes(process.env.NODE_ENV)) {
+if (process.env.LOCAL_DYNAMODB !== 'false') {
   dynamoose.aws.ddb.local();
   dynamoose.logger.providers.set(console);
   console.log('Connected to DynamoDB localhost');
