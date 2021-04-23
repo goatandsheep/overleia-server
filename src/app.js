@@ -1,6 +1,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
+const authMiddleware = require('./middleware/authMiddleware');
 require('dotenv-extended').load();
 
 const app = express();
@@ -29,6 +30,7 @@ corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development
   origin: process.env.SERVER_URL,
 });
 app.use(cors(corsSettings));
+app.use(authMiddleware());
 app.options('*', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
