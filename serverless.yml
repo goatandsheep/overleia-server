@@ -1,0 +1,19 @@
+service: overleia-server
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  app:
+    handler: server.run
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: false
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: false
+plugins:
+  - serverless-offline

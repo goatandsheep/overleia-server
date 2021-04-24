@@ -8,6 +8,7 @@
     "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
     "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
     "lambda": "node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js",
+    "offline": "sls offline --skipCacheInvalidation",
     "test": "node tests",
     "pack": "npm-pack-all-zip --dist=dist",
     "lint": "eslint src",
@@ -23,6 +24,8 @@
     "dotenv-extended": "^2.9.0",
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
+    "serverless-http": "^2.7.0",
+    "serverless-offline": "^6.9.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
