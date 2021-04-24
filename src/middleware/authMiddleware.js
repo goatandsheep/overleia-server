@@ -1,5 +1,4 @@
 import CognitoExpress from 'cognito-express';
-import * as logger from 'express-winston';
 
 const cognito = new CognitoExpress({
   region: process.env.AWS_REGION,
@@ -30,7 +29,6 @@ const authenticate = function(req, res, next) {
         });
     }
 
-    logger.log(`User was able to login ${response}`);
     req.user = response;
     next();
   });

@@ -1,5 +1,5 @@
 import express from 'express';
-import * as uuidv4 from 'uuid';
+import { v4 } from 'uuid';
 import cors from 'cors';
 import dotEnvExtended from 'dotenv-extended';
 import authenticate from './middleware/authMiddleware.js';
@@ -74,7 +74,7 @@ app.get('/jobs/:id', async (req, res) => {
  * create job / apply template to file
  */
 app.post('/jobs', async (req, res) => {
-  const id = uuidv4();
+  const id = v4();
   try {
     const jobOut = { id, ...req.body };
     const job = await OutputModel.create(jobOut);
@@ -103,7 +103,7 @@ app.get('/jobs', async (req, res) => {
  * create new template
  */
 app.post('/templates/new', async (req, res) => {
-  const id = uuidv4();
+  const id = v4();
   try {
     const template = await TemplateModel.create({ id, ...req.body });
     await template.save();
@@ -190,7 +190,7 @@ app.get('/file/:id', async (req, res) => {
  */
 app.post('/file', async (req, res) => {
   try {
-    const id = req.body.id || uuidv4();
+    const id = req.body.id || v4();
     console.log('body', req.body);
     const file = await InputModel.create({ file: req.body.file, id });
     res.status(200).jsonp(file);
