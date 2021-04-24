@@ -1,4 +1,9 @@
-const dynamoose = require('dynamoose');
+import dynamoose from 'dynamoose';
+
+import ElementResponse from './ElementResponse.js';
+import InputSchema from './InputModel.js';
+import OutputSchema from './OutputResponse.js';
+import TemplateResponse from './TemplateResponse.js';
 
 const region = process.env.AWS_REGION || 'us-east-1';
 
@@ -14,21 +19,9 @@ if (process.env.LOCAL_DYNAMODB !== 'false') {
   console.log('Updated Dynamo Config');
 }
 
-const ElementResponse = require('./ElementResponse');
-const InputSchema = require('./InputModel');
-const OutputSchema = require('./OutputResponse');
-const TemplateResponse = require('./TemplateResponse');
-
 const buildLocalDb = process.env.NODE_ENV === 'development' ? {} : { create: false };
 
-const ElementModel = dynamoose.model('Element', new dynamoose.Schema(ElementResponse), buildLocalDb);
-const InputModel = dynamoose.model('Input', new dynamoose.Schema(InputSchema), buildLocalDb);
-const OutputModel = dynamoose.model('Output', new dynamoose.Schema(OutputSchema), buildLocalDb);
-const TemplateModel = dynamoose.model('Template', new dynamoose.Schema(TemplateResponse), buildLocalDb);
-
-module.exports = {
-  ElementModel,
-  InputModel,
-  OutputModel,
-  TemplateModel,
-};
+export const ElementModel = dynamoose.model('Element', new dynamoose.Schema(ElementResponse), buildLocalDb);
+export const InputModel = dynamoose.model('Input', new dynamoose.Schema(InputSchema), buildLocalDb);
+export const OutputModel = dynamoose.model('Output', new dynamoose.Schema(OutputSchema), buildLocalDb);
+export const TemplateModel = dynamoose.model('Template', new dynamoose.Schema(TemplateResponse), buildLocalDb);

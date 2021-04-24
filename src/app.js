@@ -1,17 +1,19 @@
-const express = require('express');
-const { v4: uuidv4 } = require('uuid');
-const cors = require('cors');
-const authMiddleware = require('./middleware/authMiddleware');
-require('dotenv-extended').load();
+import express from 'express';
+import * as uuidv4 from 'uuid';
+import cors from 'cors';
+import dotEnvExtended from 'dotenv-extended';
+import authenticate from './middleware/authMiddleware.js';
 
-const app = express();
-
-const {
+import {
   ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,
-} = require('./models');
+} from './models/index.js';
+
+dotEnvExtended.load();
+
+const app = express();
 
 /**
  * Checks user groups
@@ -30,7 +32,7 @@ corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development
   origin: process.env.SERVER_URL,
 });
 app.use(cors(corsSettings));
-app.use(authMiddleware());
+app.use(authenticate);
 app.options('*', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
@@ -218,4 +220,4 @@ app.all('/*', (req, res) => {
   res.status(404).send('Route not found');
 });
 
-module.exports = app;
+export default app;

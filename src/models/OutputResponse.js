@@ -1,10 +1,10 @@
-const uuid = require('uuid');
+import { v4 } from 'uuid';
 
-module.exports = {
+const OutputModel = {
   id: {
     type: String,
     hashKey: true,
-    default: uuid.v4,
+    default: v4,
   },
   name: {
     type: String,
@@ -39,3 +39,5 @@ module.exports = {
     default: () => new Date(),
   },
 };
+
+export default OutputModel;

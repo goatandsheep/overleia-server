@@ -1,10 +1,10 @@
-const uuid = require('uuid');
+import { v4 } from 'uuid';
 
-module.exports = {
+const ElementResponse = {
   id: {
     hashKey: true,
     type: Number,
-    default: uuid.v4,
+    default: v4,
   },
   elementType: {
     type: String,
@@ -33,3 +33,5 @@ module.exports = {
     default: 'In Progress',
   },
 };
+
+export default ElementResponse;

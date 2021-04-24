@@ -1,32 +1,39 @@
-import * as jwt from 'jsonwebtoken';
+import CognitoExpress from 'cognito-express';
+import * as logger from 'express-winston';
 
-const jwkToPem = require('jwk-to-pem');
+const cognito = new CognitoExpress({
+  region: process.env.AWS_REGION,
+  cognitoUserPoolId: process.env.COGNITO_POOL_ID,
+  tokenUse: 'access', // Possible Values: access | id
+  tokenExpiration: 3600000, // Up to default expiration of 1 hour (3600000 ms)
+});
 
-const cognitoPoolId = process.env.COGNITO_POOL_ID || '';
-const jwk = process.env.JWK || '';
-
-if (!cognitoPoolId || !jwk) {
-  throw new Error('env var JWK COGNITO_POOL_ID are required for cognito pool');
-}
-const cognitoIssuer = `https://cognito-idp.us-east-1.amazonaws.com/${cognitoPoolId}`;
-
-module.exports = function setCurrentUser(req, res, next) {
-  const header = req.header('authorization');
-  const [type, token] = header.split(' ');
-
-  const pem = jwkToPem(jwk);
-  jwt.verify(token, pem, { algorithms: ['RS256'] }, (err, decodedToken) => {
-    const currentSeconds = Math.floor((new Date()).valueOf() / 1000);
-    if (currentSeconds > decodedToken.exp || currentSeconds < decodedToken.auth_time) {
-      throw new Error('claim is expired or invalid');
+const authenticate = function(req, res, next) {
+  let accessTokenFromClient = req.headers.authorization;
+  if (!accessTokenFromClient) {
+    return res.status(401)
+      .json({
+        UserMessage: 'Unauthorized: User cannot access this route.',
+        DeveloperMessage: 'Unauthorized: User cannot access this route. Bearer token is missing from header',
+        ErrorCode: '0003',
+      });
+  }
+  accessTokenFromClient = accessTokenFromClient.replace('Bearer', '')
+    .trim();
+  cognito.validate(accessTokenFromClient, function (err, response) {
+    if (err) {
+      return res.status(401)
+        .json({
+          UserMessage: 'Unauthorized: User cannot access this route.',
+          DeveloperMessage: `Unauthorized: User cannot access this route. ${err}`,
+          ErrorCode: '0004',
+        });
     }
-    if (decodedToken.iss !== cognitoIssuer) {
-      throw new Error('claim issuer is invalid');
-    }
-    if (decodedToken.token_use !== 'access') {
-      throw new Error('claim use is not access');
-    }
-    console.log(`claim confirmed for ${decodedToken.username}`);
+
+    logger.log(`User was able to login ${response}`);
+    req.user = response;
     next();
   });
 };
+
+export default authenticate;
