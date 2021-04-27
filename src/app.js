@@ -22,7 +22,7 @@ function verifyToken() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-if (typeof process.env.COGNITO_POOL_ID !== 'undefined' || process.env.COGNITO_POOL_ID !== 'false') {
+if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_POOL_ID !== 'false') {
   const authenticate = require('./middleware/authMiddleware');
   app.use(authenticate);
 }
