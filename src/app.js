@@ -3,8 +3,6 @@ const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 require('dotenv-extended').load();
 
-const authenticate = require('./middleware/authMiddleware');
-
 const app = express();
 
 const {
@@ -24,6 +22,11 @@ function verifyToken() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+if (typeof process.env.COGNITO_POOL_ID !== 'undefined' || process.env.COGNITO_POOL_ID !== 'false') {
+  const authenticate = require('./middleware/authMiddleware');
+  app.use(authenticate);
+}
+
 let corsSettings = {
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
 };
@@ -31,7 +34,6 @@ corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development
   origin: process.env.SERVER_URL,
 });
 app.use(cors(corsSettings));
-app.use(authenticate);
 app.options('*', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
