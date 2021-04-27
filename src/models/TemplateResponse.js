@@ -1,10 +1,10 @@
-import { v4 } from 'uuid';
+const uuid = require('uuid');
 
-const TemplateModel = {
+module.exports = {
   id: {
     type: String,
     hashKey: true,
-    default: v4,
+    default: uuid.v4,
   },
   height: {
     type: Number,
@@ -41,5 +41,3 @@ const TemplateModel = {
     type: Number,
   },
 };
-
-export default TemplateModel;

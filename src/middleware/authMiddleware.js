@@ -1,4 +1,4 @@
-import CognitoExpress from 'cognito-express';
+const CognitoExpress = require('cognito-express');
 
 const cognito = new CognitoExpress({
   region: process.env.AWS_REGION,
@@ -34,4 +34,4 @@ const authenticate = function(req, res, next) {
   });
 };
 
-export default authenticate;
+module.exports = authenticate;
