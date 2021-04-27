@@ -1,15 +1,13 @@
-import { v4 } from 'uuid';
+const uuid = require('uuid');
 
-const InputModel = {
+module.exports = {
   id: {
     type: String,
     hashKey: true,
-    default: v4,
+    default: uuid.v4,
   },
   file: {
     type: String,
     required: true,
   },
 };
-
-export default InputModel;

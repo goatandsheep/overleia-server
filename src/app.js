@@ -1,19 +1,16 @@
-import express from 'express';
-import { v4 } from 'uuid';
-import cors from 'cors';
-import dotEnvExtended from 'dotenv-extended';
-import authenticate from './middleware/authMiddleware.js';
+const express = require('express');
+const { v4: uuidv4 } = require('uuid');
+const cors = require('cors');
+require('dotenv-extended').load();
 
-import {
+const app = express();
+
+const {
   ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,
-} from './models/index.js';
-
-dotEnvExtended.load();
-
-const app = express();
+} = require('./models');
 
 /**
  * Checks user groups
@@ -32,7 +29,6 @@ corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development
   origin: process.env.SERVER_URL,
 });
 app.use(cors(corsSettings));
-app.use(authenticate);
 app.options('*', cors());
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
@@ -74,7 +70,7 @@ app.get('/jobs/:id', async (req, res) => {
  * create job / apply template to file
  */
 app.post('/jobs', async (req, res) => {
-  const id = v4();
+  const id = uuidv4();
   try {
     const jobOut = { id, ...req.body };
     const job = await OutputModel.create(jobOut);
@@ -103,7 +99,7 @@ app.get('/jobs', async (req, res) => {
  * create new template
  */
 app.post('/templates/new', async (req, res) => {
-  const id = v4();
+  const id = uuidv4();
   try {
     const template = await TemplateModel.create({ id, ...req.body });
     await template.save();
@@ -190,7 +186,7 @@ app.get('/file/:id', async (req, res) => {
  */
 app.post('/file', async (req, res) => {
   try {
-    const id = req.body.id || v4();
+    const id = req.body.id || uuidv4();
     console.log('body', req.body);
     const file = await InputModel.create({ file: req.body.file, id });
     res.status(200).jsonp(file);
@@ -220,4 +216,4 @@ app.all('/*', (req, res) => {
   res.status(404).send('Route not found');
 });
 
-export default app;
+module.exports = app;
