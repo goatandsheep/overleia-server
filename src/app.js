@@ -131,9 +131,10 @@ app.get('/templates/:id', async (req, res) => {
  */
 app.patch('/templates/:id', async (req, res) => {
   try {
-    let template = await TemplateModel.get({ id: req.params.id });
-    template = Object.assign(template, req);
-    await template.save();
+
+    const templateId = req.params.id;
+    await TemplateModel.update({ id: templateId }, req.body);
+    const template = await TemplateModel.get({ id: templateId });
     res.status(200).jsonp(template);
   } catch (err) {
     console.error('patch/templates/id', err);
