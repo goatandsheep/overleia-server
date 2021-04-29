@@ -27,6 +27,11 @@ if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_PO
   app.use(authenticate);
 }
 
+let proc = undefined;
+if (typeof process.env.PROC_SERVER !== 'undefined' && process.env.PROC_SERVER !== 'false') {
+  proc = require('./utils/proc');
+}
+
 let corsSettings = {
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
 };
@@ -80,7 +85,12 @@ app.post('/jobs', async (req, res) => {
     const jobOut = { id, ...req.body };
     const job = await OutputModel.create(jobOut);
     await job.save();
-    
+    if (typeof proc !== 'undefined' && job.type === 'Overleia') {
+      proc.overleia(job.inputs, job.template);
+    }
+    // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
+    //   proc.beatcaps();
+    // }
     res.status(200).jsonp(jobOut);
   } catch (err) {
     console.error('post/jobs', err);

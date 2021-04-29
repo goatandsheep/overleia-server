@@ -1,9 +1,24 @@
-const Overleia = require('overleia');
+const pip = require('overleia');
+
+// TODO: fetch from S3
 
 const settings = {
-  BASE_INPUT_MP4_FILENAME: 'plane.mp4',
   INPUT_DIRECTORY: '/data/',
-  PIP_INPUT_MP4_FILENAME: 'video.mp4',
 };
 
-module.exports = {};
+const overleia = async function overleia(inputs, template) {
+  // TODO: initially test with some sample data
+  const pipParams = {
+    inputs,
+    template,
+  };
+  const results = await pip(pipParams, settings.INPUT_DIRECTORY);
+  console.log('results', results);
+  // TODO: set values in DynamoDB
+  // TODO: upload to S3
+};
+
+module.exports = {
+  overleia,
+  settings,
+};

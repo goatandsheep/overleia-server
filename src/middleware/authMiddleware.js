@@ -7,8 +7,8 @@ const cognito = new CognitoExpress({
   tokenExpiration: 3600000, // Up to default expiration of 1 hour (3600000 ms)
 });
 
-const authenticate = function(req, res, next) {
-  let accessTokenFromClient = req.headers.authorization;
+const authenticate = function authenticate(req, res, next) {
+  const accessTokenFromClient = req.headers.accesstoken;
   if (!accessTokenFromClient) {
     return res.status(401)
       .json({
@@ -17,9 +17,7 @@ const authenticate = function(req, res, next) {
         ErrorCode: '0003',
       });
   }
-  accessTokenFromClient = accessTokenFromClient.replace('Bearer', '')
-    .trim();
-  cognito.validate(accessTokenFromClient, function (err, response) {
+  function validateTokenCallback(err, response) {
     if (err) {
       return res.status(401)
         .json({
@@ -31,7 +29,8 @@ const authenticate = function(req, res, next) {
 
     req.user = response;
     next();
-  });
+  }
+  cognito.validate(accessTokenFromClient, validateTokenCallback);
 };
 
 module.exports = authenticate;
