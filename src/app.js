@@ -80,6 +80,7 @@ app.post('/jobs', async (req, res) => {
     const jobOut = { id, ...req.body };
     const job = await OutputModel.create(jobOut);
     await job.save();
+    
     res.status(200).jsonp(jobOut);
   } catch (err) {
     console.error('post/jobs', err);
@@ -92,7 +93,13 @@ app.post('/jobs', async (req, res) => {
  */
 app.get('/jobs', async (req, res) => {
   try {
-    const jobs = await OutputModel.scan().exec();
+    let jobs = [];
+    if (req.query.status) {
+      // TODO: sort by status
+      jobs = await OutputModel.scan().using('statusIndex').exec();
+    } else {
+      jobs = await OutputModel.scan().exec();
+    }
     res.status(200).jsonp(jobs);
   } catch (err) {
     console.error('get/jobs', err);

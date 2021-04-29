@@ -27,12 +27,24 @@ module.exports = {
       'Cancelled',
       'Complete',
     ],
-    rangeKey: true,
+    index: {
+      name: 'statusIndex',
+      global: true,
+    },
     default: 'In Progress',
   },
   templateId: {
     type: String,
     required: true,
+  },
+  type: {
+    type: String,
+    enum: [
+      'Overleia',
+      'BeatCaps',
+    ],
+    required: true,
+    default: 'Overleia',
   },
   updatedDate: {
     type: Date,
