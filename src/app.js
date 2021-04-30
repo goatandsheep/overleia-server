@@ -91,7 +91,7 @@ app.post('/jobs', async (req, res) => {
     ));
     const template = await TemplateModel.get({ id: req.body.templateId });
     // if (typeof proc !== 'undefined' && job.type === 'Overleia') {
-    proc.overleia(inputs, template, req.user.identityId);
+    proc.overleia(inputs, template, req.user.identityId, id);
     // }
     // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
     //   proc.beatcaps();
