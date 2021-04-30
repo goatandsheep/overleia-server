@@ -7,19 +7,21 @@ const cognito = new CognitoExpress({
   tokenExpiration: 3600000, // Up to default expiration of 1 hour (3600000 ms)
 });
 
-const authenticate = function(req, res, next) {
+const authenticate = function authenticate(req, res, next) {
   let accessTokenFromClient = req.headers.authorization;
+  // https://stackoverflow.com/questions/45116793/how-to-get-cognito-identity-id-in-backend-that-is-requested-by-aws-api-gateway
+  const identityId = req.headers['x-auth-token'] || '';
   if (!accessTokenFromClient) {
     return res.status(401)
       .json({
         UserMessage: 'Unauthorized: User cannot access this route.',
         DeveloperMessage: 'Unauthorized: User cannot access this route. Bearer token is missing from header',
         ErrorCode: '0003',
+        Data: req.headers,
       });
   }
-  accessTokenFromClient = accessTokenFromClient.replace('Bearer', '')
-    .trim();
-  cognito.validate(accessTokenFromClient, function (err, response) {
+  accessTokenFromClient = accessTokenFromClient.replace('Bearer', '').trim();
+  function validateTokenCallback(err, response) {
     if (err) {
       return res.status(401)
         .json({
@@ -30,8 +32,10 @@ const authenticate = function(req, res, next) {
     }
 
     req.user = response;
+    req.user.identityId = identityId;
     next();
-  });
+  }
+  cognito.validate(accessTokenFromClient, validateTokenCallback);
 };
 
 module.exports = authenticate;
