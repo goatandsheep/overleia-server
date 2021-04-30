@@ -22,11 +22,6 @@ function verifyToken() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_POOL_ID !== 'false') {
-  const authenticate = require('./middleware/authMiddleware');
-  app.use(authenticate);
-}
-
 let proc = undefined;
 if (typeof process.env.PROC_SERVER !== 'undefined' && process.env.PROC_SERVER !== 'false') {
   proc = require('./utils/proc');
@@ -40,6 +35,11 @@ corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development
 });
 app.use(cors(corsSettings));
 app.options('*', cors());
+
+if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_POOL_ID !== 'false') {
+  const authenticate = require('./middleware/authMiddleware');
+  app.use(authenticate);
+}
 
 // app.use(/^(?!\/auth).*$/, (req, res, next) => {
 app.use(/^(?!\/login).*$/, (req, res, next) => {
@@ -85,9 +85,14 @@ app.post('/jobs', async (req, res) => {
     const jobOut = { id, ...req.body };
     const job = await OutputModel.create(jobOut);
     await job.save();
-    if (typeof proc !== 'undefined' && job.type === 'Overleia') {
-      proc.overleia(job.inputs, job.template);
-    }
+
+    const inputs = await Promise.all(req.body.inputs.map(
+      async (inputId) => InputModel.get({ id: inputId })
+    ));
+    const template = await TemplateModel.get({ id: req.body.templateId });
+    // if (typeof proc !== 'undefined' && job.type === 'Overleia') {
+    proc.overleia(inputs, template, req.user.identityId);
+    // }
     // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
     //   proc.beatcaps();
     // }
