@@ -35,10 +35,10 @@ const overleia = async function overleia(inputs, template, subfolder) {
   console.log('inputs', inputs);
   const fileConfirms = [];
   for (let i = 0, len = inputs.length; i < len; i += 1) {
-    fileConfirms.push(fileFetch(inputs[i].file, 'private/' + subfolder + '/'));
+    fileConfirms.push(fileFetch(inputs[i], 'private/' + subfolder + '/'));
   }
   await Promise.all(fileConfirms);
-  const results = await pip(pipParams, '/../..' + settings.INPUT_DIRECTORY);
+  const results = await pip(pipParams, absPathDir);
   console.log('results', results);
   // TODO: set values in DynamoDB
   // TODO: upload to S3
