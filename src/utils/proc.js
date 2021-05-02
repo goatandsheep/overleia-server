@@ -15,12 +15,13 @@ const absPathDir = pathf.join(__dirname, '..', '..', settings.INPUT_DIRECTORY);
 
 const fileFetch = async function fileFetch(filename, folder) {
   // TODO: get proper key
+  const fullPath = absPathDir + filename;
   const params = {
     Bucket: fileBucket,
     Key: folder + filename,
   };
   const fileBin = await s3.getObject(params).promise();
-  const fullPath = absPathDir + filename;
+  console.log('fullpath', fullPath);
   return fs.writeFile(fullPath, fileBin);
 };
 
@@ -45,8 +46,9 @@ const overleia = async function overleia(inputs, template, subfolder, outputId) 
   const pipParams = {
     inputs,
     template,
+    verbose: true,
   };
-  console.log('inputs', inputs);
+  console.log('template', template);
   const s3FolderPath = 'private/' + subfolder + '/';
   try {
     const fileConfirms = [];
@@ -56,6 +58,9 @@ const overleia = async function overleia(inputs, template, subfolder, outputId) 
     await Promise.all(fileConfirms);
     const results = await pip(pipParams, absPathDir);
     console.log('results', results);
+    if (!results) {
+      throw new Error('processing error');
+    }
     await OutputModel.update({
       id: outputId,
     }, {
@@ -71,13 +76,14 @@ const overleia = async function overleia(inputs, template, subfolder, outputId) 
       status: 'Cancelled',
       updatedDate: new Date(),
     });
+    console.error('error', err);
   }
-  clearGarbage('completed.mp4');
-  const garbageConfirms = [];
-  for (let i = 0, len = inputs.length; i < len; i += 1) {
-    garbageConfirms.push(clearGarbage(inputs[i], s3FolderPath));
-  }
-  Promise.all(garbageConfirms);
+  // const garbageConfirms = [];
+  // for (let i = 0, len = inputs.length; i < len; i += 1) {
+  //   garbageConfirms.push(clearGarbage(inputs[i], s3FolderPath));
+  // }
+  // Promise.all(garbageConfirms);
+  // clearGarbage('completed.mp4');
 };
 
 module.exports = {
