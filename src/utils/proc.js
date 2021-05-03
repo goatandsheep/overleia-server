@@ -23,9 +23,7 @@ const fileFetch = async function fileFetch(filename, folder) {
   return fileBin.Body;
 };
 
-const filePut = async function filePut(filename, folder) {
-  const fullPath = absPathDir + filename;
-  const data = await fs.readFile(fullPath);
+const filePut = async function filePut(filename, folder, data) {
   const params = {
     Body: data,
     Bucket: fileBucket,
@@ -39,7 +37,7 @@ const clearGarbage = async function clearGarbage(filename) {
   return fs.unlink(fullPath);
 };
 
-const overleia = async function overleia(inputs, template, subfolder, outputId) {
+const overleia = async function overleia(inputs, template, subfolder, job) {
   // TODO: initially test with some sample data
   const pipParams = {
     inputs,
@@ -54,23 +52,21 @@ const overleia = async function overleia(inputs, template, subfolder, outputId) 
       fileConfirms.push(fileFetch(inputs[i], s3FolderPath));
     }
     pipParams.inputs = await Promise.all(fileConfirms);
-    console.log('inputs', pipParams.inputs);
     const results = await pip(pipParams);
-    console.log('results', results);
     if (!results) {
       throw new Error('processing error');
     }
     await OutputModel.update({
-      id: outputId,
+      id: job.id,
     }, {
       status: 'Complete',
       updatedDate: new Date(),
     });
     // TODO: rename output file
-    filePut('completed.mp4', s3FolderPath);
+    filePut(job.name + '.mp4', s3FolderPath, Buffer.from(results));
   } catch (err) {
     await OutputModel.update({
-      id: outputId,
+      id: job.id,
     }, {
       status: 'Cancelled',
       updatedDate: new Date(),
