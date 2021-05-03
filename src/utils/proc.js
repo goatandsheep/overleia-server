@@ -3,6 +3,7 @@ const AWS = require('aws-sdk');
 const fs = require('fs').promises;
 const pathf = require('path');
 const { OutputModel } = require('../models');
+const { file } = require('../models/InputModel');
 
 const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
@@ -14,15 +15,12 @@ const settings = {
 const absPathDir = pathf.join(__dirname, '..', '..', settings.INPUT_DIRECTORY);
 
 const fileFetch = async function fileFetch(filename, folder) {
-  // TODO: get proper key
-  const fullPath = absPathDir + filename;
   const params = {
     Bucket: fileBucket,
     Key: folder + filename,
   };
   const fileBin = await s3.getObject(params).promise();
-  console.log('fullpath', fullPath);
-  return fs.writeFile(fullPath, fileBin);
+  return fileBin.Body;
 };
 
 const filePut = async function filePut(filename, folder) {
@@ -55,8 +53,9 @@ const overleia = async function overleia(inputs, template, subfolder, outputId) 
     for (let i = 0, len = inputs.length; i < len; i += 1) {
       fileConfirms.push(fileFetch(inputs[i], s3FolderPath));
     }
-    await Promise.all(fileConfirms);
-    const results = await pip(pipParams, absPathDir);
+    pipParams.inputs = await Promise.all(fileConfirms);
+    console.log('inputs', pipParams.inputs);
+    const results = await pip(pipParams);
     console.log('results', results);
     if (!results) {
       throw new Error('processing error');
