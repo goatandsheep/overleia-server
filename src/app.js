@@ -115,7 +115,11 @@ app.get('/jobs', async (req, res) => {
     } else {
       jobs = await OutputModel.scan().exec();
     }
-    res.status(200).jsonp(jobs);
+    const out = {
+      elements: jobs,
+      total: jobs.count,
+    };
+    res.status(200).jsonp(out);
   } catch (err) {
     console.error('get/jobs', err);
     res.status(500).send('Bad Request');
@@ -172,7 +176,12 @@ app.patch('/templates/:id', async (req, res) => {
 app.get('/templates', async (req, res) => {
   try {
     const templates = await TemplateModel.scan().exec();
-    res.status(200).jsonp(templates);
+    // TODO: get count()
+    const out = {
+      elements: templates,
+      total: templates.count,
+    };
+    res.status(200).jsonp(out);
   } catch (err) {
     console.error('get/templates', err);
     res.status(500).send('Bad Request');
