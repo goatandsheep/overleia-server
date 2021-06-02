@@ -91,8 +91,11 @@ app.post('/jobs', async (req, res) => {
     ));
     const template = await TemplateModel.get({ id: req.body.templateId });
     // if (typeof proc !== 'undefined' && job.type === 'Overleia') {
-    proc.overleia(inputs, template, req.user.identityId, job);
-    // }
+    if (process.env.NODE_ENV !== 'development') {
+      proc.overleia(inputs, template, req.user.identityId, job);
+    } else {
+      proc.overleia(inputs, template, 'us-east-1:6de7b0fa-dd18-496f-99dc-fd9921b21413', job);
+    }
     // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
     //   proc.beatcaps();
     // }
