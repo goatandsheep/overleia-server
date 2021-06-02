@@ -1,0 +1,337 @@
+{
+	"info": {
+		"_postman_id": "05162e52-47be-4e39-87ee-dbce4806ba4e",
+		"name": "overleia-server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "list files",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/file/list",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"file",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list templates",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/templates",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"templates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list jobs",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/templates",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"templates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create template + id",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"template1\",\r\n    \"id\": \"spec-template\",\r\n    \"height\": 720,\r\n    \"views\": [\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 15\r\n        },\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 150\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/templates/new",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"templates",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create template",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"template1\",\r\n    \"height\": 720,\r\n    \"views\": [\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 15\r\n        },\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 150\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/templates/new",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"templates",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create job",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"output1\",\r\n    \"templateId\": \"spec-template\",\r\n    \"inputs\": [\r\n        \"input-1\",\r\n        \"input-2\",\r\n        \"input-3\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/jobs",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create job + id",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"output1\",\r\n    \"templateId\": \"spec-template\",\r\n    \"inputs\": [\r\n        \"input-1\",\r\n        \"input-2\",\r\n        \"input-3\"\r\n    ],\r\n    \"id\": \"output-1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/jobs",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create file",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "file",
+							"value": "bobob.mp4",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/file",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create file 3",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "file",
+							"value": "bobob.mp4",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "input-3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/file",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create file 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "file",
+							"value": "bobob.mp4",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "input-2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/file",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create file 1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "file",
+							"value": "bobob.mp4",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "input-1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/file",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"file"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
