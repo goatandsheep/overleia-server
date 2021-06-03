@@ -1,4 +1,5 @@
 const pip = require('overleia');
+const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const { OutputModel } = require('../models');
 
@@ -18,7 +19,8 @@ const fileFetch = async function fileFetch(filename, folder) {
   return fileBin.Body;
 };
 
-const filePut = async function filePut(filename, folder, data) {
+const filePut = async function filePut(filename, folder) {
+  const data = Buffer.from(await fs.readFile(filename), 'binary');
   const params = {
     Body: data,
     Bucket: fileBucket,
