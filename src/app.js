@@ -36,7 +36,7 @@ corsSettings = Object.assign(corsSettings, process.env.NODE_ENV === 'development
 app.use(cors(corsSettings));
 app.options('*', cors());
 
-if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_POOL_ID !== 'false') {
+if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_POOL_ID && process.env.COGNITO_POOL_ID !== 'false') {
   const authenticate = require('./middleware/authMiddleware');
   app.use(authenticate);
 }
@@ -94,7 +94,7 @@ app.post('/jobs', async (req, res) => {
     if (process.env.NODE_ENV !== 'development') {
       proc.overleia(inputs, template, req.user.identityId, job);
     } else {
-      proc.overleia(inputs, template, 'us-east-1:6de7b0fa-dd18-496f-99dc-fd9921b21413', job);
+      proc.overleia(inputs, template, 'us-east-1:ea85208c-1358-4e2d-b656-c2d613205bba', job);
     }
     // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
     //   proc.beatcaps();
