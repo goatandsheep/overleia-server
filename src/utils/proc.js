@@ -1,5 +1,7 @@
 const pip = require('overleia');
+const fs = require('fs').promises;
 const AWS = require('aws-sdk');
+const path = require('path');
 const { OutputModel } = require('../models');
 
 const s3 = new AWS.S3();
@@ -10,15 +12,23 @@ const settings = {
 };
 
 const fileFetch = async function fileFetch(filename, folder) {
-  const params = {
-    Bucket: fileBucket,
-    Key: folder + filename,
-  };
-  const fileBin = await s3.getObject(params).promise();
-  return fileBin.Body;
+  try {
+    const params = {
+      Bucket: fileBucket,
+      Key: folder + filename,
+    };
+    const fileBin = await s3.getObject(params).promise();
+    const pathString = path.join(__dirname, '..', '..', 'data', filename);
+    await fs.writeFile(pathString, fileBin.Body);
+    return pathString;
+  } catch (err) {
+    console.error('file fetch error', err);
+    throw err;
+  }
 };
 
-const filePut = async function filePut(filename, folder, data) {
+const filePut = async function filePut(filename, folder, localFilePath) {
+  const data = Buffer.from(await fs.readFile(localFilePath), 'binary');
   const params = {
     Body: data,
     Bucket: fileBucket,
@@ -29,7 +39,9 @@ const filePut = async function filePut(filename, folder, data) {
 
 const overleia = async function overleia(inputs, template, subfolder, job) {
   // TODO: initially test with some sample data
+  const outputPath = path.join(__dirname, '..', '..', 'data', (job.name + '.mp4'));
   const pipParams = {
+    output: outputPath,
     inputs,
     template,
     verbose: true,
@@ -53,7 +65,8 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
       updatedDate: new Date(),
     });
     // TODO: rename output file
-    filePut(job.name + '.mp4', s3FolderPath, Buffer.from(results));
+    filePut(job.name + '.mp4', s3FolderPath, outputPath);
+    console.log('success!');
   } catch (err) {
     await OutputModel.update({
       id: job.id,
