@@ -41,33 +41,6 @@ if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_PO
   app.use(authenticate);
 }
 
-// app.use(/^(?!\/auth).*$/, (req, res, next) => {
-app.use(/^(?!\/login).*$/, (req, res, next) => {
-  // if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
-  //   const status = 401;
-  //   const message = 'Bad authorization header';
-  //   console.log(req.headers.authorization);
-  //   res.status(status).json({ status, message });
-  //   return;
-  // }
-  // try {
-  //   verifyToken(req.headers.authorization.split(' ')[1]);
-  //   next();
-  // } catch (err) {
-  //   const status = 401;
-  //   const message = 'Error: access_token is not valid';
-  //   res.status(status).json({ status, message });
-  // }
-  // TODO: get user object and return
-  if (process.env.NODE_ENV === 'development' && (!req.user)) {
-    req.user = {
-      identityId: 'us-east-1:ea85208c-1358-4e2d-b656-c2d613205bba',
-    };
-  }
-  verifyToken();
-  next();
-});
-
 /**
  * get info about a single job
  */
