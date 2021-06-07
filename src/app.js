@@ -22,7 +22,7 @@ function verifyToken() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-let proc = undefined;
+let proc;
 if (typeof process.env.PROC_SERVER !== 'undefined' && process.env.PROC_SERVER !== 'false') {
   proc = require('./utils/proc');
 }
@@ -59,6 +59,11 @@ app.use(/^(?!\/login).*$/, (req, res, next) => {
   //   res.status(status).json({ status, message });
   // }
   // TODO: get user object and return
+  if (process.env.NODE_ENV === 'development' && (!req.user)) {
+    req.user = {
+      identityId: 'us-east-1:ea85208c-1358-4e2d-b656-c2d613205bba',
+    };
+  }
   verifyToken();
   next();
 });
@@ -87,15 +92,11 @@ app.post('/jobs', async (req, res) => {
     await job.save();
 
     const inputs = await Promise.all(req.body.inputs.map(
-      async (inputId) => (await InputModel.get({ id: inputId })).file
+      async (inputId) => (await InputModel.get({ id: inputId })).file,
     ));
     const template = await TemplateModel.get({ id: req.body.templateId });
     // if (typeof proc !== 'undefined' && job.type === 'Overleia') {
-    if (process.env.NODE_ENV !== 'development') {
-      proc.overleia(inputs, template, req.user.identityId, job);
-    } else {
-      proc.overleia(inputs, template, 'us-east-1:ea85208c-1358-4e2d-b656-c2d613205bba', job);
-    }
+    proc.overleia(inputs, template, req.user.identityId, job);
     // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
     //   proc.beatcaps();
     // }
@@ -197,7 +198,7 @@ app.get('/templates', async (req, res) => {
  */
 app.get('/file/list', async (req, res) => {
   try {
-    const files = await InputModel.scan().exec();
+    const files = await InputModel.scan().filter('owner').eq(req.user.identityId).exec();
     if (files.length) {
       res.status(200).jsonp(files);
     } else {
@@ -210,7 +211,7 @@ app.get('/file/list', async (req, res) => {
 });
 
 /**
- * get template
+ * get file metadata
  */
 app.get('/file/:id', async (req, res) => {
   try {
@@ -229,7 +230,11 @@ app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
-    const file = await InputModel.create({ file: req.body.file, id });
+    const file = await InputModel.create({
+      file: req.body.file,
+      id,
+      owner: req.user.identityId,
+    });
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
