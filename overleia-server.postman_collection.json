@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05162e52-47be-4e39-87ee-dbce4806ba4e",
+		"_postman_id": "ac71dfdd-cffe-41a2-a305-0f603c69e34a",
 		"name": "overleia-server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -84,41 +84,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/templates",
+					"raw": "localhost:5000/jobs",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"templates"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "create template + id",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"template1\",\r\n    \"id\": \"spec-template\",\r\n    \"height\": 720,\r\n    \"views\": [\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 15\r\n        },\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 150\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:5000/templates/new",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"templates",
-						"new"
+						"jobs"
 					]
 				}
 			},
@@ -131,7 +103,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"template1\",\r\n    \"height\": 720,\r\n    \"views\": [\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 15\r\n        },\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 150\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"name\": \"template1\",\r\n    \"height\": 720,\r\n    \"views\": [\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 15,\r\n            \"y\": 25\r\n        },\r\n        {\r\n            \"height\": 80,\r\n            \"width\": 100,\r\n            \"x\": 150, \r\n            \"y\": 20\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -159,34 +131,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"output1\",\r\n    \"templateId\": \"spec-template\",\r\n    \"inputs\": [\r\n        \"input-1\",\r\n        \"input-2\",\r\n        \"input-3\"\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:5000/jobs",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"jobs"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "create job + id",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"output1\",\r\n    \"templateId\": \"spec-template\",\r\n    \"inputs\": [\r\n        \"input-1\",\r\n        \"input-2\",\r\n        \"input-3\"\r\n    ],\r\n    \"id\": \"output-1\"\r\n}",
+					"raw": "{\r\n    \"name\": \"output1\",\r\n    \"templateId\": \"15ed4005-271b-4a00-948d-cd61015d49ec\",\r\n    \"inputs\": [\r\n        \"1a03f6e5-7680-4617-a467-680d7eefdc53\",\r\n        \"f6b3c9ef-2a02-4c98-aa56-fd01a7b07682\"\r\n    ],\r\n    \"type\": \"Overleia\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -328,6 +273,56 @@
 					"port": "5000",
 					"path": [
 						"file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get job",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/jobs/:id",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"jobs",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "5a7b7d73-c9e3-40f6-b5a0-ad63ad15e6bd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get template",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/templates/:id",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"templates",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "15ed4005-271b-4a00-948d-cd61015d49ec"
+						}
 					]
 				}
 			},
