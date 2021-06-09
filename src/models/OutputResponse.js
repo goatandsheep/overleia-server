@@ -10,6 +10,9 @@ module.exports = {
     type: String,
     required: true,
   },
+  errorlog: { 
+    type: String
+  },
   creationDate: {
     type: Date,
     default: () => new Date(),
@@ -50,4 +53,8 @@ module.exports = {
     type: Date,
     default: () => new Date(),
   },
+  owner: {
+    type: String,
+    required: true,
+  }
 };

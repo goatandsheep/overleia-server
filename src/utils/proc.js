@@ -73,6 +73,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     }, {
       status: 'Cancelled',
       updatedDate: new Date(),
+      errorlog: err.message
     });
     console.error('error', err);
   }

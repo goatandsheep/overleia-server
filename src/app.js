@@ -11,6 +11,7 @@ const {
   OutputModel,
   TemplateModel,
 } = require('./models');
+const OutputResponse = require('./models/OutputResponse');
 
 /**
  * Checks user groups
@@ -60,7 +61,7 @@ app.get('/jobs/:id', async (req, res) => {
 app.post('/jobs', async (req, res) => {
   const id = uuidv4();
   try {
-    const jobOut = { id, ...req.body };
+    const jobOut = { id, ...req.body, owner: req.user.identityId };
     const job = await OutputModel.create(jobOut);
     await job.save();
 
@@ -75,6 +76,7 @@ app.post('/jobs', async (req, res) => {
     // }
     res.status(200).jsonp(jobOut);
   } catch (err) {
+    // OutputResponse.errorlog = 
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');
   }
@@ -90,7 +92,7 @@ app.get('/jobs', async (req, res) => {
       // TODO: sort by status
       jobs = await OutputModel.scan().using('statusIndex').exec();
     } else {
-      jobs = await OutputModel.scan().exec();
+      jobs = await OutputModel.scan().filter('owner').eq(req.user.identityId).exec();
     }
     const out = {
       elements: jobs,
