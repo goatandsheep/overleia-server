@@ -92,7 +92,7 @@ app.get('/jobs', async (req, res) => {
       // TODO: sort by status
       jobs = await OutputModel.scan().using('statusIndex').exec();
     } else {
-      jobs = await OutputModel.scan().exec();
+      jobs = await OutputModel.scan().filter('owner').eq(req.user.identityId).exec();
     }
     const out = {
       elements: jobs,
