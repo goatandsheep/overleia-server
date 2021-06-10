@@ -11,6 +11,17 @@ const settings = {
   INPUT_DIRECTORY: '/data/',
 };
 
+const fileDelete = async function fileDelete(filename) {
+  try {
+    const pathString = path.join(__dirname, '..', '..', 'data', filename);
+    await fs.unlink(pathString);
+    return pathString;
+  } catch (err) {
+    console.error('file delete error', err);
+    throw err;
+  }
+};
+
 const fileFetch = async function fileFetch(filename, folder) {
   try {
     const params = {
@@ -65,7 +76,14 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
       updatedDate: new Date(),
     });
     // TODO: rename output file
-    filePut(job.name + '.mp4', s3FolderPath, outputPath);
+    const jobPath = `${job.name}.mp4`;
+    await filePut(jobPath, s3FolderPath, outputPath);
+    const deleteProms = [];
+    deleteProms.push(fileDelete(jobPath));
+    for (let i = 0, len = inputs.length; i < len; i += 1) {
+      deleteProms.push(fileDelete(inputs[i]));
+    }
+    await Promise.all(deleteProms);
     console.log('success!');
   } catch (err) {
     await OutputModel.update({
