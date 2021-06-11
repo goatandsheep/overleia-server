@@ -15,7 +15,7 @@ module.exports = {
     required: true,
   },
   // adding status 549
-  /* status: { 
+   status: { 
     type: String, 
     required: true,
     enum: [
@@ -24,5 +24,5 @@ module.exports = {
       'Complete',
     ],
   }
-  */
+
 };
