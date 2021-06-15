@@ -11,7 +11,6 @@ const {
   OutputModel,
   TemplateModel,
 } = require('./models');
-const OutputResponse = require('./models/OutputResponse');
 
 /**
  * Checks user groups
