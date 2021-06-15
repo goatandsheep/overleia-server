@@ -22,11 +22,11 @@ module.exports = {
       'In Progress',
       'Cancelled',
       'Complete',
-    ],
-    // adding errorlog 549 
-    errorlog: { 
-      type: String
-    }
+      'Failed'
+    ]
+  }, 
+   // adding errorlog 549 
+   errorlog: { 
+    type: String
   }
-
 };

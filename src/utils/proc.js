@@ -3,6 +3,8 @@ const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const path = require('path');
 const { OutputModel } = require('../models');
+// 549
+const { InputModel } = require('../models');
 
 const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
@@ -36,16 +38,40 @@ const fileFetch = async function fileFetch(filename, folder) {
     console.error('file fetch error', err);
     console.log('path', folder + filename);
     throw err;
+   
+    // 549
+    throw err = new Error('file does not exist in S3');
+    InputModel.update({
+      status: 'Cancelled',
+      errorlog: err.message
+    });
+    console.error('error', err);
   }
 };
 
 const filePut = async function filePut(filename, folder, localFilePath) {
-  const data = Buffer.from(await fs.readFile(localFilePath), 'binary');
-  const params = {
-    Body: data,
-    Bucket: fileBucket,
-    Key: folder + filename,
-  };
+  try {  
+    const data = Buffer.from(await fs.readFile(localFilePath), 'binary');
+    const params = {
+      Body: data,
+      Bucket: fileBucket,
+      Key: folder + filename,
+    }; 
+    InputModel.update({status: 'Complete'})
+  } catch (err) { 
+    console.error('file fetch error', err);
+    console.log('path', folder + filename);
+    //throw err;
+   
+    // 549
+    throw err = new Error('error uploading to s3');
+    InputModel.update({
+      status: 'Cancelled',
+      errorlog: err.message
+    });
+    console.error('error', err);
+  }
+
   return s3.putObject(params).promise();
 };
 
@@ -69,6 +95,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     const results = await pip(pipParams);
     if (!results) {
       throw new Error('processing error');
+      
     }
     await OutputModel.update({
       id: job.id,

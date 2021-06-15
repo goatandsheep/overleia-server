@@ -65,7 +65,7 @@ app.post('/jobs', async (req, res) => {
     await job.save();
 
     const inputs = await Promise.all(req.body.inputs.map(
-      async (inputId) => (await InputModel.get({ id: inputId })).file,
+      async (inputId) => (await InputModel.get({ id: inputId, status: 'In Progress' })).file,
     ));
     const template = await TemplateModel.get({ id: req.body.templateId });
     // if (typeof proc !== 'undefined' && job.type === 'Overleia') {
@@ -208,9 +208,11 @@ app.post('/file', async (req, res) => {
       file: req.body.file,
       id,
       owner: req.user.identityId,
+      status: 'In Progress'
     });
     res.status(200).jsonp(file);
   } catch (err) {
+    InputModel.update({id: id, file: re.body.file, owner: req.user.identityId, status: 'Failed', errorlog: err.message});
     console.error('post/file', err);
     res.status(500).send('Bad Request');
   }
