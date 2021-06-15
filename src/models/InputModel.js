@@ -23,6 +23,10 @@ module.exports = {
       'Cancelled',
       'Complete',
     ],
+    // adding errorlog 549 
+    errorlog: { 
+      type: String
+    }
   }
 
 };
