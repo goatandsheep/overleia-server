@@ -70,7 +70,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
       await OutputModel.update({
         id: job.id,
       }, {
-        percentage,
+        progress: percentage,
         status: 'Complete',
         updatedDate: new Date(),
       });
