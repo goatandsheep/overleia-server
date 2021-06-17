@@ -17,7 +17,7 @@ module.exports = {
   // adding status 549
    status: { 
     type: String, 
-    required: true,
+   // required: true,
     enum: [
       'In Progress',
       'Cancelled',

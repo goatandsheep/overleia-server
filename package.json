@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
     "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
     "lambda": "node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js",
-    "test": "node tests",
+    "test": "jest",
     "pack": "npm-pack-all-zip --dist=dist",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
