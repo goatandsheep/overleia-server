@@ -22,6 +22,7 @@ const fileDelete = async function fileDelete(filename) {
   }
 };
 
+// download
 const fileFetch = async function fileFetch(filename, folder) {
   try {
     const params = {
@@ -39,6 +40,7 @@ const fileFetch = async function fileFetch(filename, folder) {
   }
 };
 
+// upload
 const filePut = async function filePut(filename, folder, localFilePath) {
   const data = Buffer.from(await fs.readFile(localFilePath), 'binary');
   const params = {
@@ -100,5 +102,5 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
 
 module.exports = {
   overleia,
-  settings,
+  settings
 };

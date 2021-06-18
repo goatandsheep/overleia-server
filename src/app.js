@@ -119,18 +119,23 @@ app.post('/templates/new', async (req, res) => {
   }
 });
 
-/**
- * get template
- */
-app.get('/templates/:id', async (req, res) => {
+// get template 
+const getTemplate = async function (req, res) {
   try {
     const template = await TemplateModel.get({ id: req.params.id });
     res.status(200).jsonp(template);
+    console.log('I wonder if this works');
+    return template;
   } catch (err) {
     console.error('get/templates/id', err);
     res.status(500).send('Bad Request');
   }
-});
+};
+
+/**
+ * get template
+ */
+app.get('/templates/:id', getTemplate);
 
 /**
  * update template
@@ -236,4 +241,7 @@ app.all('/*', (req, res) => {
   res.status(404).send('Route not found');
 });
 
-module.exports = app;
+module.exports = {
+  app: app,
+  myFunc: getTemplate
+};
