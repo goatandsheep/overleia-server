@@ -71,7 +71,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
         id: job.id,
       }, {
         progress: percentage,
-        status: 'Complete',
+        status: 'In Progress',
         updatedDate: new Date(),
       });
     };
