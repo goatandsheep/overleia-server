@@ -66,6 +66,17 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
       fileConfirms.push(fileFetch(inputs[i], s3FolderPath));
     }
     pipParams.inputs = await Promise.all(fileConfirms);
+
+    const updateProgress = async function(percentage) {
+      await OutputModel.update({
+        id: job.id,
+      }, {
+        progress: percentage,
+        status: 'In Progress',
+        updatedDate: new Date(),
+      });
+    };
+    pipParams.progressCallback = updateProgress;
     const results = await pip(pipParams);
     if (!results) {
       throw new Error('processing error');
