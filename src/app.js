@@ -243,5 +243,5 @@ app.all('/*', (req, res) => {
 
 module.exports = {
   app: app,
-  myFunc: getTemplate
+  getTemplate: getTemplate
 };
