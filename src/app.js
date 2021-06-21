@@ -41,6 +41,8 @@ if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_PO
   app.use(authenticate);
 }
 
+app.functions = {};
+
 /**
  * get info about a single job
  */
@@ -119,23 +121,26 @@ app.post('/templates/new', async (req, res) => {
   }
 });
 
-// get template 
-const getTemplate = async function (req, res) {
-  try {
-    const template = await TemplateModel.get({ id: req.params.id });
-    res.status(200).jsonp(template);
-    console.log('I wonder if this works');
-    return template;
-  } catch (err) {
-    console.error('get/templates/id', err);
-    res.status(500).send('Bad Request');
-  }
+// get template
+const getTemplate = async function getTemplate(id) {
+  return TemplateModel.get({ id });
 };
 
 /**
  * get template
  */
-app.get('/templates/:id', getTemplate);
+app.get('/templates/:id', async (req, res) => {
+  try {
+    const template = await getTemplate(req.params.id);
+    res.status(200).jsonp(template);
+    console.log('I wonder if this works');
+  } catch (err) {
+    console.error('get/templates/id', err);
+    res.status(500).send('Bad Request');
+  }
+});
+
+app.functions.getTemplate = getTemplate;
 
 /**
  * update template
@@ -241,7 +246,4 @@ app.all('/*', (req, res) => {
   res.status(404).send('Route not found');
 });
 
-module.exports = {
-  app: app,
-  getTemplate: getTemplate
-};
+module.exports = app;
