@@ -10,6 +10,9 @@ module.exports = {
     type: String,
     required: true,
   },
+  progress: { 
+    type: Number
+  },
   errorlog: { 
     type: String
   },
