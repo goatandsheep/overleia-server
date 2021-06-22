@@ -6,9 +6,20 @@ module.exports = {
     type: Number,
     default: uuid.v4,
   },
+  /*
   elementType: {
     type: String,
     required: true,
+  },
+  */
+  type: {
+    type: String,
+    enum: [
+      'Overleia',
+      'BeatCaps',
+    ],
+    required: true,
+    default: 'Overleia',
   },
   elementName: {
     type: String,
