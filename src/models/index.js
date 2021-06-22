@@ -16,7 +16,7 @@ if (process.env.LOCAL_DYNAMODB !== 'false') {
 
 const ElementResponse = require('./ElementResponse');
 const InputSchema = require('./InputModel');
-const OutputSchema = require('./OutputResponse');
+const OutputSchema = require('./OutputModel');
 const TemplateResponse = require('./TemplateResponse');
 
 const buildLocalDb = (typeof process.env.LOCAL_DYNAMODB !== 'undefined') && (process.env.LOCAL_DYNAMODB === 'true') ? { create: false } : {};

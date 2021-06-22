@@ -11,7 +11,8 @@ module.exports = {
     required: true,
   },
   progress: { 
-    type: Number
+    type: Number,
+    default: 0,
   },
   errorlog: { 
     type: String
