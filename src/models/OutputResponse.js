@@ -10,11 +10,11 @@ module.exports = {
     type: String,
     required: true,
   },
-  progress: { 
-    type: Number
+  progress: {
+    type: Number,
   },
-  errorlog: { 
-    type: String
+  errorlog: {
+    type: String,
   },
   creationDate: {
     type: Date,
@@ -59,5 +59,5 @@ module.exports = {
   owner: {
     type: String,
     required: true,
-  }
+  },
 };
