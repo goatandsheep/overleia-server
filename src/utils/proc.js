@@ -50,7 +50,7 @@ const filePut = async function filePut(filename, folder, localFilePath) {
 
 const overleia = async function overleia(inputs, template, subfolder, job) {
   // TODO: initially test with some sample data
-  const outputPath = path.join(__dirname, '..', '..', 'data', (job.name + '.mp4'));
+  const outputPath = path.join(__dirname, '..', '..', 'data', (`${job.name}.mp4`));
   const pipParams = {
     output: outputPath,
     inputs,
@@ -58,7 +58,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     verbose: true,
   };
   console.log('template', template);
-  const s3FolderPath = 'private/' + subfolder + '/';
+  const s3FolderPath = `private/${subfolder}/`;
   try {
     const fileConfirms = [];
     for (let i = 0, len = inputs.length; i < len; i += 1) {
@@ -66,7 +66,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     }
     pipParams.inputs = await Promise.all(fileConfirms);
 
-    const updateProgress = async function(percentage) {
+    const updateProgress = async function (percentage) {
       await OutputModel.update({
         id: job.id,
       }, {
@@ -102,7 +102,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     }, {
       status: 'Cancelled',
       updatedDate: new Date(),
-      errorlog: err.message
+      errorlog: err.message,
     });
     console.error('error', err);
   }
