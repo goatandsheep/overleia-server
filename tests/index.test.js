@@ -22,10 +22,13 @@ const testFunction = async (inputsObj, templateObj) => {
 }
 
 describe('my tests', () => {
+  
   beforeAll(async () => {
     // setup the db
     // running dinomaurDB
     DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']);
+
+    /*
     // creating files and 
     const in1 = await InputModel.create({ file: 'test1.mp4' });
     const in2 = await InputModel.create({ file: 'test2.mp4' });
@@ -59,8 +62,10 @@ describe('my tests', () => {
         x: 150,
       }],
     });
+    */
     // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
   });
+  
   // tests
   it('create input 1', () => {
     // TODO: abstract from app.js

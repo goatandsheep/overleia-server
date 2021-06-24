@@ -202,8 +202,8 @@ app.get('/templates', async (req, res) => {
 
 
 // ABSTRACTION: list files
-const listFiles = async function listFiles(files) {
-  return files.length;
+const listFiles = async function listFiles(owner) {
+  return InputModel.scan().filter('owner').eq(owner).exec();
 };
 
 /**
@@ -211,7 +211,7 @@ const listFiles = async function listFiles(files) {
  */
 app.get('/file/list', async (req, res) => {
   try {
-    const files = await InputModel.scan().filter('owner').eq(req.user.identityId).exec();
+    const files = await listFiles(req.user.identityId);
     if (listFiles(files)) {
       res.status(200).jsonp(files);
     } else {
@@ -238,11 +238,7 @@ app.get('/file/:id', async (req, res) => {
 
 // ABSTRACTION: create input
 const createInput = async function createInput(file, id, owner) {
-  return InputModel.create({
-    file: req.body.file,
-    id,
-    owner: req.user.identityId,
-  });
+  return InputModel.create({file, id, owner});
 };
 
 /**
@@ -252,11 +248,7 @@ app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
-    const file = await createInput({
-      file: req.body.file,
-      id,
-      owner: req.user.identityId,
-    });
+    const file = await createInput(req.body.file, id, req.user.identityId);
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
