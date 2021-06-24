@@ -34,6 +34,7 @@ const fileFetch = async function fileFetch(filename, folder) {
     return pathString;
   } catch (err) {
     console.error('file fetch error', err);
+    console.log('path', folder + filename);
     throw err;
   }
 };
