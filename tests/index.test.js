@@ -20,13 +20,24 @@ const testFunction = async (inputsObj, templateObj) => {
   // TODO: create output
   // TODO: search outputs
 }
+/*
+DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb'])
+  .then(async () => {
+    console.log('running dynamo')
+  }).catch((err) => {
+    console.error(err)
+  })
+  */
+ 
+beforeAll(() => {
+ return DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']);
+});
 
 describe('my tests', () => {
-  
-  beforeAll(async () => {
+
     // setup the db
     // running dinomaurDB
-    DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']);
+   // DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']),
 
     /*
     // creating files and 
@@ -64,7 +75,7 @@ describe('my tests', () => {
     });
     */
     // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
-  });
+ // );
   
   // tests
   it('create input 1', () => {
@@ -117,7 +128,7 @@ describe('my tests', () => {
   
   afterAll(async () => {
     // teardown db
-    DynamoDbLocal.stop(dynamoLocalPort);
+    await DynamoDbLocal.stop(dynamoLocalPort);
     // end of teardown
   });
 });
