@@ -76,7 +76,7 @@ app.post('/jobs', async (req, res) => {
     // }
     res.status(200).jsonp(jobOut);
   } catch (err) {
-    // OutputModel.errorlog = 
+    // OutputResponse.errorlog =
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');
   }
