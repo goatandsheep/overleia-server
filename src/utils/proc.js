@@ -67,7 +67,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     }
     pipParams.inputs = await Promise.all(fileConfirms);
 
-    const updateProgress = async function (percentage) {
+    const updateProgress = async function updateProgress(percentage) {
       await OutputModel.update({
         id: job.id,
       }, {
