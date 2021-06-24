@@ -67,7 +67,7 @@ describe('my tests', () => {
   })
   it('get template test', () => {
     const myProm = app.functions.getTemplate('1231232');
-    return expect(myProm).resolves.toBe(true);
+    return expect(myProm).resolves.toBe(false);
   }, 9999999);
   it('searching for files', () => {
     // TODO: abstract from app.js

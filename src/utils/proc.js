@@ -113,5 +113,5 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
 
 module.exports = {
   overleia,
-  settings
+  settings,
 };
