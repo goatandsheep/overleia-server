@@ -2,7 +2,6 @@ const DynamoDbLocal = require('dynamodb-local');
 // const services = require('../src/services');
 
 const {
-  // ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,

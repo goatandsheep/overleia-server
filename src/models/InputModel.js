@@ -15,14 +15,14 @@ module.exports = {
     required: true,
   },
   // adding status 549
-   status: { 
-    type: String, 
+  status: {
+    type: String,
     required: true,
     enum: [
       'In Progress',
       'Cancelled',
       'Complete',
     ],
-  }
+  },
 
 };
