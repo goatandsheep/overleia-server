@@ -56,6 +56,15 @@ app.get('/jobs/:id', async (req, res) => {
   }
 });
 
+// ABSTRACTION: createJob
+const createJob = async function createJob(id, req, owner) {
+  return OutputModel.create({id, ...req.body, owner: req.user.identityId});
+};
+// ABSTRACTION: createJob
+const saveJob = async function saveJob(job) {
+  return job.save();
+};
+
 /**
  * create job / apply template to file
  */
@@ -63,8 +72,8 @@ app.post('/jobs', async (req, res) => {
   const id = uuidv4();
   try {
     const jobOut = { id, ...req.body, owner: req.user.identityId };
-    const job = await OutputModel.create(jobOut);
-    await job.save();
+    const job = await createJob(jobOut);
+    await saveJob(job);
 
     const inputs = await Promise.all(req.body.inputs.map(
       async (inputId) => (await InputModel.get({ id: inputId })).file,
@@ -83,6 +92,11 @@ app.post('/jobs', async (req, res) => {
   }
 });
 
+// ABSTRACTION: listJobs
+const listJobs = async function listJobs(owner) {
+  return OutputModel.scan().filter('owner').eq(owner).exec();
+};
+
 /**
  * get jobs / outputs list
  */
@@ -93,7 +107,7 @@ app.get('/jobs', async (req, res) => {
       // TODO: sort by status
       jobs = await OutputModel.scan().using('statusIndex').exec();
     } else {
-      jobs = await OutputModel.scan().filter('owner').eq(req.user.identityId).exec();
+      jobs = await listJobs(req.user.identityId);
     }
     const out = {
       elements: jobs,
@@ -106,14 +120,25 @@ app.get('/jobs', async (req, res) => {
   }
 });
 
+// ABSTRACTION: create template 
+const createTemplate = async function createTemplate(id, req) {
+  template = TemplateModel.create({ id, ...req.body });
+  return template;
+};
+
+// ABSTRACTION: save template 
+const saveTemplate = async function saveTemplate(template) {
+  return template.save();
+};
+
 /**
  * create new template
  */
 app.post('/templates/new', async (req, res) => {
   const id = uuidv4();
   try {
-    const template = await TemplateModel.create({ id, ...req.body });
-    await template.save();
+    const template = await createTemplate(id, ...req.body)
+    await saveTemplate(template);
     res.status(200).jsonp(template);
   } catch (err) {
     console.error('post/templates/new', err);
@@ -121,7 +146,7 @@ app.post('/templates/new', async (req, res) => {
   }
 });
 
-// get template
+// ABSTRACTION: get template
 const getTemplate = async function getTemplate(id) {
   return TemplateModel.get({ id });
 };
@@ -133,14 +158,12 @@ app.get('/templates/:id', async (req, res) => {
   try {
     const template = await getTemplate(req.params.id);
     res.status(200).jsonp(template);
-    console.log('I wonder if this works');
+    
   } catch (err) {
     console.error('get/templates/id', err);
     res.status(500).send('Bad Request');
   }
 });
-
-app.functions.getTemplate = getTemplate;
 
 /**
  * update template
@@ -177,13 +200,19 @@ app.get('/templates', async (req, res) => {
   }
 });
 
+
+// ABSTRACTION: list files
+const listFiles = async function listFiles(files) {
+  return files.length;
+};
+
 /**
  * list uploaded files
  */
 app.get('/file/list', async (req, res) => {
   try {
     const files = await InputModel.scan().filter('owner').eq(req.user.identityId).exec();
-    if (files.length) {
+    if (listFiles(files)) {
       res.status(200).jsonp(files);
     } else {
       res.status(400).send('No files found');
@@ -207,6 +236,15 @@ app.get('/file/:id', async (req, res) => {
   }
 });
 
+// ABSTRACTION: create input
+const createInput = async function createInput(file, id, owner) {
+  return InputModel.create({
+    file: req.body.file,
+    id,
+    owner: req.user.identityId,
+  });
+};
+
 /**
  * upload file
  */
@@ -214,7 +252,7 @@ app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
-    const file = await InputModel.create({
+    const file = await createInput({
       file: req.body.file,
       id,
       owner: req.user.identityId,
@@ -238,6 +276,16 @@ app.get('/element/:id', async (req, res) => {
     res.status(500).send('Bad Request');
   }
 });
+
+// app.functions
+app.functions.getTemplate = getTemplate;
+app.functions.listFiles = listFiles;
+app.functions.createInput = createInput;
+app.functions.createTemplae = createTemplate;
+app.functions.saveTemplate = saveTemplate;
+app.functions.createJob = createJob; 
+app.functions.saveJob = saveJob;
+app.functions.listJobs = listJobs;
 
 // keep at the bottom
 

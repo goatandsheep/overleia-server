@@ -3,7 +3,6 @@ const DynamoDbLocal = require('dynamodb-local');
 const app = require('../src/app');
 // const services = require('../src/services');
 const {
-  // ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,
@@ -62,54 +61,55 @@ describe('my tests', () => {
     });
     // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
   });
+  // tests
   it('create input 1', () => {
     // TODO: abstract from app.js
-  })
+    const inputProm = app.functions.createInput('the-ask', 'pee', 'pee');
+    return expect(inputProm).resolves.toBe(false);
+  }, 9999999);
+
   it('get template test', () => {
     const myProm = app.functions.getTemplate('1231232');
     return expect(myProm).resolves.toBe(false);
   }, 9999999);
-  it('searching for files', () => {
+  
+  it('list files test', () => {
     // TODO: abstract from app.js
-    const files = await InputModel.scan().exec();
-    if (files.length) {
-      console.log(files);
-    } else {
-      throw new Error('No files found');
-    }
+    const files = InputModel.scan().exec();
+    const fileProm = app.functions.listFiles(files);
+    return expect(fileProm).resolves.toBe(false);
   }, 9999999);
-  it('creating templates', () => {
+  
+  it('creating template', () => {
     // TODO: abstract from app.js
-    const templates = await TemplateModel.scan().exec();
-    if (templates.length) {
-      console.log(templates);
-    } else {
-      throw new Error('No templates found');
-    }
+    const template = app.functions.createTemplate(id, req);
+    const saveTemplate = app.functions.saveTemplate(template);
+    return expect(saveTemplate).resolves.toBe(false);
   }, 9999999);
+
   it('creating outputs', () => {
     // TODO: abstract from app.js
-
-    const output1 = await OutputModel.create({
+    const output1 = app.functions.createJob({
       name: 'output1.mp4',
       inputs: [in1.id, in2.id, in3.id],
       templateId: template1.id,
     });
+    const saveJob1 = app.functions.saveJob(output1);
 
-    const output2 = await OutputModel.create({
+    const output2 = app.functions.createJob({
       name: 'output1.mp4',
       inputs: [in2.id, in3.id, in1.id],
       templateId: template2.id,
     });
+    const saveJob2 = app.functions.saveJob(output2);
+    return expect(saveJob1).resolves.toBe(false) && expect(saveJob1).resolves.toBe(false);
   }, 9999999);
+
   it('searching outputs', () => {
-    const outputs = await OutputModel.scan().exec();
-    if (outputs.length) {
-      console.log(outputs);
-    } else {
-      throw new Error('No outputs found');
-    }
+    const outputs = app.function.listJobs(owner); 
+    return expect(outputs).resolves.toBe(false);
   })
+  
   afterAll(async () => {
     // teardown db
     DynamoDbLocal.stop(dynamoLocalPort);
