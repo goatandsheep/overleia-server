@@ -47,7 +47,6 @@ app.get('/jobs/:id', async (req, res) => {
   try {
     const job = await OutputModel.get({ id: req.params.id });
     res.status(200).jsonp(job);
-    console.log('progress', job.progress);
   } catch (err) {
     console.error('get/jobs/id', err);
     res.status(500).send('Bad Request');
@@ -75,7 +74,6 @@ app.post('/jobs', async (req, res) => {
     // }
     res.status(200).jsonp(jobOut);
   } catch (err) {
-    // OutputResponse.errorlog =
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');
   }
