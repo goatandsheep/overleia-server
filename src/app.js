@@ -6,7 +6,6 @@ require('dotenv-extended').load();
 const app = express();
 
 const {
-  ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,
@@ -48,7 +47,7 @@ app.get('/jobs/:id', async (req, res) => {
   try {
     const job = await OutputModel.get({ id: req.params.id });
     res.status(200).jsonp(job);
-    console.log("progress", job.progress);
+    console.log('progress', job.progress);
   } catch (err) {
     console.error('get/jobs/id', err);
     res.status(500).send('Bad Request');
@@ -213,19 +212,6 @@ app.post('/file', async (req, res) => {
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
-    res.status(500).send('Bad Request');
-  }
-});
-
-/**
- * get a element
- */
-app.get('/element/:id', async (req, res) => {
-  try {
-    const element = await ElementModel.get({ id: req.params.id });
-    res.status(200).jsonp(element);
-  } catch (err) {
-    console.error('get/element', err);
     res.status(500).send('Bad Request');
   }
 });
