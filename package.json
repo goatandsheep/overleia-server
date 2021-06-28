@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
     "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
     "lambda": "node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js",
-    "test": "node tests",
+    "test": "nsdsode tests",
     "pack": "npm-pack-all-zip --dist=dist",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
@@ -17,17 +17,17 @@
   "dependencies": {
     "@vendia/serverless-express": "^4.3.4",
     "aws-sdk": "^2.896.0",
+    "beatcaps-library": "git+https://github.com/goatandsheep/beatcaps-library.git",
     "body-parser": "^1.19.0",
     "cognito-express": "^2.0.18",
     "cors": "^2.8.5",
     "dotenv-extended": "^2.9.0",
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
-    "overleia": "^3.2.1",
-    "uuid": "^8.3.2",
-    "node-webvtt": "^1.9.1",
     "ffmpeg.js": "^4.2.9003",
-    "beatcaps-library": "git+https://github.com/goatandsheep/beatcaps-library.git"
+    "node-webvtt": "^1.9.1",
+    "overleia": "^3.2.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -37,9 +37,14 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "jest": "^26.6.3",
-    "npm-pack-all-zip": "^0.2.0"
+    "lint-staged": "^11.0.0",
+    "npm-pack-all-zip": "^0.2.0",
+    "pre-commit": "^1.2.2"
   },
   "eslint": {
     "extends": "eslint:recommended"
-  }
+  },
+  "pre-commit": [
+    "lint"
+  ]
 }
