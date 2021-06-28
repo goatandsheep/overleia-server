@@ -73,6 +73,7 @@ app.post('/jobs', async (req, res) => {
     //   proc.beatcaps();
     // }
     res.status(200).jsonp(jobOut);
+    // should I get the output file size here?
   } catch (err) {
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');
@@ -207,6 +208,7 @@ app.post('/file', async (req, res) => {
       id,
       owner: req.user.identityId,
     });
+    // should I get the input file size here? 
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
