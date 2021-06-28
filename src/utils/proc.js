@@ -1,5 +1,12 @@
 const pip = require('overleia');
-const beatcaps = require('beatcaps-library');
+const { mp4ToMemfs, memfsToMp3 } = require('./Mp4ToMp3Utils');
+const { mp3ToData } = require('./Mp3ToJsonUtils');
+const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./JsonToWebvttUtils');
+const {
+  DEFAULT_META,
+  DEFAULT_VALIDITY,
+  INPUT_MP3_DIR, INPUT_MP3_FILENAME, INPUT_MP4_FILENAME, INPUT_MP4_PATH, TEST_MP3_PATH,
+} = require('./constants');
 const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const path = require('path');
@@ -9,7 +16,6 @@ const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
 
 const settings = {
-  INPUT_DIRECTORY: '/data/',
 };
 
 const fileDelete = async function fileDelete(filename) {
@@ -50,16 +56,29 @@ const filePut = async function filePut(filename, folder, localFilePath) {
   return s3.putObject(params).promise();
 };
 
-const bcaps = async function bcaps(inputFile) {
-  if (inputFile.endsWith('.mp4')) {
-    // use the mp4tomp3 module
-    Mp4toMp3Utils
+const beatcaps = async function beatcaps(input, subfolder) {
+  try {
+    // const outputPath = path.join(__dirname, '..', '..', 'data', (`${input.name}.mp4`));
 
+    const s3FolderPath = `private/${subfolder}/`;
+
+    const fileConfirms = [];
+    fileConfirms.push(fileFetch(input, s3FolderPath));
+    // 1) use the mp4tomp3 module
+    // if (inputFile.endsWith('.mp4')) {
+
+    memfsToMp3(mp4ToMemfs(INPUT_MP4_FILENAME, constants.INPUT_DIRECTORY, INPUT_MP3_FILENAME));
+
+    // 2) use the mp3tojson module
+    const beats = await mp3ToData(INPUT_MP3_DIR + INPUT_MP3_FILENAME, 0.3);
+    // 3) use the jsontowebvtt module
+    const cues = buildNodeWebvttCues(beats);
+    const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
+    buildWebvtt(vttInput);
+  } catch (err) {
+    console.error(err);
   }
-  // use the mp3tojson module 
-  // use the jsontowebvtt module
-
-}
+};
 
 const overleia = async function overleia(inputs, template, subfolder, job) {
   // TODO: initially test with some sample data

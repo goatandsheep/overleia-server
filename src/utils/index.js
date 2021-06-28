@@ -12,5 +12,5 @@ module.exports = {
   mp3ToData,
   mp4ToMemfs,
   memfsToMp3,
-  removeFile
+  removeFile,
 };
