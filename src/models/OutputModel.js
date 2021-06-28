@@ -60,4 +60,5 @@ module.exports = {
     type: String,
     required: true,
   },
+  // add file size 580
 };
