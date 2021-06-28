@@ -27,11 +27,9 @@ DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb'])
   }).catch((err) => {
     console.error(err)
   })
-  */
- 
-beforeAll(() => {
- return DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']);
-});
+*/
+
+beforeAll(() => DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']));
 
 describe('my tests', () => {
 
