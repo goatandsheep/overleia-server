@@ -6,7 +6,6 @@ require('dotenv-flow').config();
 const app = express();
 
 const {
-  ElementModel,
   InputModel,
   OutputModel,
   TemplateModel,
@@ -86,7 +85,6 @@ app.post('/jobs', async (req, res) => {
     // }
     res.status(200).jsonp(jobOut);
   } catch (err) {
-    // OutputResponse.errorlog =
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');
   }
@@ -237,8 +235,8 @@ app.get('/file/:id', async (req, res) => {
 });
 
 // ABSTRACTION: create input
-const createInput = async function createInput(file, id, owner) {
-  return InputModel.create({file, id, owner});
+const createInput = async function createInput(file, id, owner, status = 'In Progress') {
+  return InputModel.create({ file, id, owner, status });
 };
 
 /**

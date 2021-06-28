@@ -16,12 +16,12 @@ module.exports = {
   },
   status: {
     type: String,
-    // required: true,
     enum: [
       'In Progress',
       'Cancelled',
       'Complete',
     ],
+    default: 'In Progress',
   },
 
 };
