@@ -206,6 +206,7 @@ app.post('/file', async (req, res) => {
       file: req.body.file,
       id,
       owner: req.user.identityId,
+      status: 'In Progress',
     });
     res.status(200).jsonp(file);
   } catch (err) {

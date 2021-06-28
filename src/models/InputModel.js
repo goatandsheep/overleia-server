@@ -17,12 +17,12 @@ module.exports = {
   // adding status 549
   status: {
     type: String,
-    required: true,
     enum: [
       'In Progress',
       'Cancelled',
       'Complete',
     ],
+    default: 'In Progress'
   },
 
 };
