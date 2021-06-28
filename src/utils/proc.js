@@ -1,5 +1,5 @@
 const pip = require('overleia');
-const bcaps = require('beatcaps');
+const beatcaps = require('beatcaps-library');
 const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const path = require('path');
@@ -50,7 +50,7 @@ const filePut = async function filePut(filename, folder, localFilePath) {
   return s3.putObject(params).promise();
 };
 
-const beatcaps = async function beatcaps(inputFile) {
+const bcaps = async function bcaps(inputFile) {
   
 
 }
