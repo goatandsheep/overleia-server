@@ -1,4 +1,5 @@
 const pip = require('overleia');
+// const bcaps = require('beatcaps');
 const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const path = require('path');
@@ -49,6 +50,11 @@ const filePut = async function filePut(filename, folder, localFilePath) {
   return s3.putObject(params).promise();
 };
 
+/*const beatcaps = async function beatcaps(input) {
+  const bcaps
+
+  }
+*/
 const overleia = async function overleia(inputs, template, subfolder, job) {
   // TODO: initially test with some sample data
   const outputPath = path.join(__dirname, '..', '..', 'data', (`${job.name}.mp4`));
