@@ -53,8 +53,9 @@ const filePut = async function filePut(filename, folder, localFilePath) {
 const bcaps = async function bcaps(inputFile) {
   if (inputFile.endsWith('.mp4')) {
     // use the mp4tomp3 module
-    Mp4toMp3Utils
-
+    Mp4toMp3Utils.mp4ToMemfs(inputFile, mp4FilePath, mp3FileName);
+    Mp4toMp3Utils.memfsToMp3();
+    //Mp4toMp3Utils.removeFile();
   }
   // use the mp3tojson module 
   // use the jsontowebvtt module

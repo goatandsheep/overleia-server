@@ -26,11 +26,3 @@ export const memfsToMp3 = memfsData => {
         return e
     }
 }
-
-export const removeFile = filePath => {
-    try {
-        fs.unlinkSync(filePath)
-      } catch(err) {
-        console.error(err)
-      }
-}
