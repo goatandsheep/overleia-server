@@ -68,7 +68,15 @@ const bcaps = async function bcaps(inputFile) {
    } catch (err) {
     console.error('beatcaps error', err.message);
   }
+}
 
+/**
+ * get file size
+ */
+ function sizeOf(key) {
+  return s3.headObject({ Key: folder + filename, Bucket: fileBucket})
+      .promise()
+      .then(res => res.ContentLength);
 }
 
 const overleia = async function overleia(inputs, template, subfolder, job) {
@@ -135,4 +143,5 @@ module.exports = {
   overleia,
   beatcaps,
   settings,
+  sizeOf,
 };
