@@ -24,7 +24,11 @@
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
     "overleia": "^3.2.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "node-webvtt": "^1.9.1",
+    "ffmpeg.js": "^4.2.9003",
+    "beatcaps-library": "git+https://github.com/goatandsheep/beatcaps-library.git"
+
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
