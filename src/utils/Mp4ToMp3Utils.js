@@ -2,12 +2,10 @@ const ffmpeg = require('ffmpeg.js/ffmpeg-mp4.js');
 const fs = require('fs');
 const { INPUT_MP3_DIR } = require('../settings');
 
-export const mp4ToMemfs = (mp4FileName, mp4FilePath, mp3FileName) => {
-  const testData = new Uint8Array(fs.readFileSync(mp4FilePath));
-
+export const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3') => {
   try {
     const result = ffmpeg({
-      MEMFS: [{ name: mp4FileName, data: testData }],
+      MEMFS: [{ name: mp4FileName, data }],
       arguments: ['-i', mp4FileName, '-vn', '-acodec', 'libmp3lame', mp3FileName],
     });
 

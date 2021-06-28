@@ -58,23 +58,24 @@ const filePut = async function filePut(filename, folder, localFilePath) {
 
 const beatcaps = async function beatcaps(input, subfolder) {
   try {
-    // const outputPath = path.join(__dirname, '..', '..', 'data', (`${input.name}.mp4`));
+    const outputPath = path.join(__dirname, '..', '..', 'data', (`${input.name}.vtt`));
 
     const s3FolderPath = `private/${subfolder}/`;
 
-    const fileConfirms = [];
-    fileConfirms.push(fileFetch(input, s3FolderPath));
+    const fileData = await fileFetch(input, s3FolderPath);
     // 1) use the mp4tomp3 module
     // if (inputFile.endsWith('.mp4')) {
 
-    memfsToMp3(mp4ToMemfs(INPUT_MP4_FILENAME, constants.INPUT_DIRECTORY, INPUT_MP3_FILENAME));
+    memfsToMp3(mp4ToMemfs(fileData));
 
     // 2) use the mp3tojson module
     const beats = await mp3ToData(INPUT_MP3_DIR + INPUT_MP3_FILENAME, 0.3);
     // 3) use the jsontowebvtt module
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
-    buildWebvtt(vttInput);
+    const vttOutput = buildWebvtt(vttInput);
+    await fs.writeFile(outputPath, vttOutput);
+    await filePut(outputPath, s3FolderPath);
   } catch (err) {
     console.error(err);
   }
