@@ -7,10 +7,11 @@
     "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
     "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
     "lambda": "node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js",
-    "test": "nsdsode tests",
+    "test": "node tests",
     "pack": "npm-pack-all-zip --dist=dist",
     "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
+    "lint:fix": "eslint src --fix",
+    "lint:staged": "lint-staged"
   },
   "author": "Kemal Ahmed",
   "license": "ISC",
@@ -37,14 +38,9 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "jest": "^26.6.3",
-    "lint-staged": "^11.0.0",
-    "npm-pack-all-zip": "^0.2.0",
-    "pre-commit": "^1.2.2"
+    "npm-pack-all-zip": "^0.2.0"
   },
   "eslint": {
     "extends": "eslint:recommended"
-  },
-  "pre-commit": [
-    "lint"
-  ]
+  }
 }
