@@ -1,6 +1,6 @@
-import { INPUT_MP3_DIR } from '../settings'
-import ffmpeg from 'ffmpeg.js/ffmpeg-mp4.js'
-import fs from 'fs'
+const { INPUT_MP3_DIR } = require('../settings');
+const ffmpeg = require('ffmpeg.js/ffmpeg-mp4.js');
+const fs = require('fs');
 
 export const mp4ToMemfs = (mp4FileName, mp4FilePath, mp3FileName) => {
     const testData = new Uint8Array(fs.readFileSync(mp4FilePath));

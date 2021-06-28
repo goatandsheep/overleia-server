@@ -52,8 +52,12 @@ const filePut = async function filePut(filename, folder, localFilePath) {
 
 const bcaps = async function bcaps(inputFile) {
   if (inputFile.endsWith('.mp4')) {
-    // use the mp4tomp3 module 
+    // use the mp4tomp3 module
+    Mp4toMp3Utils
+
   }
+  // use the mp3tojson module 
+  // use the jsontowebvtt module
 
 }
 
