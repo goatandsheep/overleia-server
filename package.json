@@ -28,7 +28,6 @@
     "node-webvtt": "^1.9.1",
     "ffmpeg.js": "^4.2.9003",
     "beatcaps-library": "git+https://github.com/goatandsheep/beatcaps-library.git"
-
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
