@@ -80,6 +80,15 @@ const beatcaps = async function beatcaps(input, subfolder) {
   }
 };
 
+/**
+ * get file size
+ */
+ function sizeOf(key) {
+  return s3.headObject({ Key: folder + filename, Bucket: fileBucket})
+      .promise()
+      .then(res => res.ContentLength);
+};
+
 const overleia = async function overleia(inputs, template, subfolder, job) {
   // TODO: initially test with some sample data
   const outputPath = path.join(__dirname, '..', '..', 'data', (`${job.name}.mp4`));
@@ -144,4 +153,5 @@ module.exports = {
   overleia,
   beatcaps,
   settings,
+  sizeOf,
 };
