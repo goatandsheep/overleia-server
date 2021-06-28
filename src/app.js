@@ -207,6 +207,7 @@ app.post('/file', async (req, res) => {
       file: req.body.file,
       id,
       owner: req.user.identityId,
+      status: 'In Progress',
     });
     // should I get the input file size here? 
     res.status(200).jsonp(file);
