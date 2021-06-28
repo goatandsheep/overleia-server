@@ -22,7 +22,7 @@ module.exports = {
       'Cancelled',
       'Complete',
     ],
-    default: 'In Progress'
+    default: 'In Progress',
   },
 
 };
