@@ -25,8 +25,8 @@ module.exports = {
     default: 'In Progress',
   },
   // add file size 580
-  size: { 
+  size: {
     type: Number,
-    //required: true,
-  }
+    // required: true,
+  },
 };

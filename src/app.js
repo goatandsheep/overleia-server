@@ -209,8 +209,8 @@ app.post('/file', async (req, res) => {
       owner: req.user.identityId,
       status: 'In Progress',
     });
-    // should I get the input file size here? 
-    proc.sizeOf(`private/${req.user.identityId}/` + req.body.file);
+    // should I get the input file size here?
+    proc.sizeOf(`private/${req.user.identityId}/${req.body.file}`);
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
