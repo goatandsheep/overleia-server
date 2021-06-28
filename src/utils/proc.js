@@ -51,14 +51,23 @@ const filePut = async function filePut(filename, folder, localFilePath) {
 };
 
 const bcaps = async function bcaps(inputFile) {
-  if (inputFile.endsWith('.mp4')) {
-    // use the mp4tomp3 module
-    Mp4toMp3Utils.mp4ToMemfs(inputFile, mp4FilePath, mp3FileName);
-    Mp4toMp3Utils.memfsToMp3();
-    //Mp4toMp3Utils.removeFile();
+  try{
+    if (inputFile.endsWith('.mp4')) {
+      // use the mp4tomp3 module
+      Mp4toMp3Utils.mp4ToMemfs(inputFile, mp4FilePath, mp3FileName);
+      Mp4toMp3Utils.memfsToMp3();
+      // remove file ?
+    }
+    // use the mp3tojson module
+    Mp3toJsonUtils.mpsToData;
+  
+    // use the jsontowebvtt module
+    JsonToWebvttUtils.buildNodeWebvttCues;
+    JsonToWebvttUtils.buildNodeWebvttInput;
+    JsonToWebvttUtils.buildWebvtt;
+   } catch (err) {
+    console.error('beatcaps error', err.message);
   }
-  // use the mp3tojson module 
-  // use the jsontowebvtt module
 
 }
 

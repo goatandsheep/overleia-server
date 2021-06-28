@@ -1,8 +1,8 @@
-import webvtt from 'node-webvtt'
-export const EMPTY_CUES_ERROR = new Error("Please provide a list of cues")
-export const NULL_META_ERROR = new Error("Please provide a 'meta' parameter")
-export const NULL_CUES_ERROR = new Error("Please provide a 'cues' parameter")
-export const NULL_VALIDITY_ERROR = new Error("Please provide a 'valid' parameter")
+const webvtt = require('node-webvtt');
+export const EMPTY_CUES_ERROR = new Error("Please provide a list of cues");
+export const NULL_META_ERROR = new Error("Please provide a 'meta' parameter");
+export const NULL_CUES_ERROR = new Error("Please provide a 'cues' parameter");
+export const NULL_VALIDITY_ERROR = new Error("Please provide a 'valid' parameter");
 
 export const buildNodeWebvttCues = cues => {
     if (!cues || !cues.length)
