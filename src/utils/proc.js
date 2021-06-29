@@ -61,11 +61,14 @@ const beatcaps = async function beatcaps(input, subfolder) {
 
     const s3FolderPath = `private/${subfolder}/`;
 
-    const fileData = await fileFetch(input, s3FolderPath);
-    // 1) use the mp4tomp3 module
-    // if (inputFile.endsWith('.mp4')) {
-
-    memfsToMp3(mp4ToMemfs(fileData));
+    let fileData;
+    try {
+      // 1) use the mp4tomp3 module
+      fileData = await fileFetch(`${input.name}.mp4`, s3FolderPath);
+      memfsToMp3(mp4ToMemfs(fileData));
+    } catch {
+      fileData = await fileFetch(`${input.name}.mp3`, s3FolderPath);
+    }
 
     // 2) use the mp3tojson module
     const beats = await mp3ToData(INPUT_DIRECTORY + INPUT_MP3_FILENAME, 0.3);
