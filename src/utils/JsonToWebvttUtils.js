@@ -1,17 +1,18 @@
-import webvtt from 'node-webvtt';
+const webvtt = require('node-webvtt');
 
-export const EMPTY_CUES_ERROR = new Error('Please provide a list of cues');
-export const NULL_META_ERROR = new Error("Please provide a 'meta' parameter");
-export const NULL_CUES_ERROR = new Error("Please provide a 'cues' parameter");
-export const NULL_VALIDITY_ERROR = new Error("Please provide a 'valid' parameter");
+const EMPTY_CUES_ERROR = new Error('Please provide a list of cues');
+const NULL_META_ERROR = new Error("Please provide a 'meta' parameter");
+const NULL_CUES_ERROR = new Error("Please provide a 'cues' parameter");
+const NULL_VALIDITY_ERROR = new Error("Please provide a 'valid' parameter");
 
-export const buildNodeWebvttCues = (cues) => {
+const buildNodeWebvttCues = (cues) => {
   if (!cues || !cues.length) throw EMPTY_CUES_ERROR;
   return cues.map((cue) => {
-    cue.identifier = cue.identifier || '';
-    cue.text = cue.text || '';
-    cue.styles = cue.styles || '';
-    return cue;
+    const out = cue;
+    out.identifier = cue.identifier || '';
+    out.text = cue.text || '';
+    out.styles = cue.styles || '';
+    return out;
   });
 };
 
@@ -21,7 +22,7 @@ export const buildNodeWebvttCues = (cues) => {
  * @param {Boolean} valid
  * @returns {Object} Node-Webvtt Input Object
  */
-export const buildNodeWebvttInput = (meta, cues, valid) => {
+const buildNodeWebvttInput = (meta, cues, valid) => {
   if (!meta) throw NULL_META_ERROR;
   if (!cues) throw NULL_CUES_ERROR;
   if (!valid) throw NULL_VALIDITY_ERROR;
@@ -32,4 +33,14 @@ export const buildNodeWebvttInput = (meta, cues, valid) => {
  * @param {Object} ttObj Node-WebVTT input object
  * @returns {String} WebVTT Plain text
  */
-export const buildWebvtt = (ttObj) => webvtt.compile(ttObj);
+const buildWebvtt = (ttObj) => webvtt.compile(ttObj);
+
+module.exports = {
+  buildWebvtt,
+  buildNodeWebvttCues,
+  buildNodeWebvttInput,
+  EMPTY_CUES_ERROR,
+  NULL_CUES_ERROR,
+  NULL_META_ERROR,
+  NULL_VALIDITY_ERROR,
+};

@@ -15,9 +15,6 @@ const { OutputModel } = require('../models');
 const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
 
-const settings = {
-};
-
 const fileDelete = async function fileDelete(filename) {
   try {
     const pathString = path.join(__dirname, '..', '..', 'data', filename);
@@ -84,8 +81,12 @@ const beatcaps = async function beatcaps(input, subfolder) {
 /**
  * get file size
  */
-function sizeOf(key) {
-  return s3.headObject({ Key: folder + filename, Bucket: fileBucket })
+function sizeOf(filename, folder) {
+  const params = {
+    Key: folder + filename,
+    Bucket: fileBucket,
+  };
+  return s3.headObject(params)
     .promise()
     .then((res) => res.ContentLength);
 }
@@ -153,6 +154,5 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
 module.exports = {
   overleia,
   beatcaps,
-  settings,
   sizeOf,
 };
