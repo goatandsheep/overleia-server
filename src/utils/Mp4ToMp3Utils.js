@@ -2,7 +2,7 @@ const ffmpeg = require('ffmpeg.js/ffmpeg-mp4.js');
 const fs = require('fs');
 const { INPUT_MP3_DIR } = require('../settings');
 
-export const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3') => {
+const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3') => {
   try {
     const result = ffmpeg({
       MEMFS: [{ name: mp4FileName, data }],
@@ -16,11 +16,16 @@ export const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3'
   }
 };
 
-export const memfsToMp3 = (memfsData) => {
+const memfsToMp3 = (memfsData) => {
   try {
     fs.writeFileSync(INPUT_MP3_DIR + memfsData.name, Buffer(memfsData.data));
   } catch (e) {
     console.log(e);
     return e;
   }
+};
+
+module.exports = { 
+  mp4ToMemfs,
+  memfsToMp3
 };
