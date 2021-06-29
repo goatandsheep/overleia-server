@@ -76,17 +76,18 @@ const beatcaps = async function beatcaps(input, subfolder) {
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
     const vttOutput = buildWebvtt(vttInput);
-
+    await fs.writeFile(outputPath, vttOutput);
+    await filePut(outputFile, s3FolderPath, outputPath);
+    const size = sizeOf(outputFile, `private/${subfolder}/`);
     await OutputModel.update({
       id: input.id,
     }, {
       status: 'Complete',
       type: 'BeatCaps',
       updatedDate: new Date(),
+      size: size
     });
-    await fs.writeFile(outputPath, vttOutput);
-    await filePut(outputFile, s3FolderPath, outputPath);
-    // TODO: get the output file size
+    
   } catch (err) {
     console.error(err);
     await OutputModel.update({
@@ -144,15 +145,16 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     if (!results) {
       throw new Error('processing error');
     }
-    // TODO: get the output file size
+    const jobPath = `${job.name}.mp4`;
+    await filePut(jobPath, s3FolderPath, outputPath);
+    const size = sizeOf(outputFile, `private/${subfolder}/`);
     await OutputModel.update({
       id: job.id,
     }, {
       status: 'Complete',
       updatedDate: new Date(),
+      size: size
     });
-    const jobPath = `${job.name}.mp4`;
-    await filePut(jobPath, s3FolderPath, outputPath);
     const deleteProms = [];
     deleteProms.push(fileDelete(jobPath));
     for (let i = 0, len = inputs.length; i < len; i += 1) {
