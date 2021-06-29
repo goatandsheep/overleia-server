@@ -9,6 +9,11 @@ const DynamoDbLocal = require('dynamodb-local');
 
 const dynamoLocalPort = 8000;
 
+DynamoDbLocal.configureInstaller({
+  installPath: './dynamodblocal-bin',
+  downloadUrl: 'https://s3.sa-east-1.amazonaws.com/dynamodb-local-sao-paulo/dynamodb_local_latest.tar.gz'
+});
+
 DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']) // if you want to share with Javascript Shell
   .then(async () => {
     console.log('running dinomaurDB');
