@@ -147,7 +147,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     }
     const jobPath = `${job.name}.mp4`;
     await filePut(jobPath, s3FolderPath, outputPath);
-    const size = sizeOf(outputFile, `private/${subfolder}/`);
+    const size = sizeOf(`${job.name}.mp4`, `private/${subfolder}/`);
     await OutputModel.update({
       id: job.id,
     }, {
