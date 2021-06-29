@@ -73,6 +73,8 @@ const beatcaps = async function beatcaps(input, subfolder) {
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
     const vttOutput = buildWebvtt(vttInput);
+    await fs.writeFile(outputPath, vttOutput);
+    await filePut(outputFile, s3FolderPath, outputPath);
     const size = sizeOf(outputFile, `private/${subfolder}/`);
     await OutputModel.update({
       id: input.id,
@@ -82,8 +84,6 @@ const beatcaps = async function beatcaps(input, subfolder) {
       updatedDate: new Date(),
       size: size
     });
-    await fs.writeFile(outputPath, vttOutput);
-    await filePut(outputFile, s3FolderPath, outputPath);
     
   } catch (err) {
     console.error(err);
