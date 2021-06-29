@@ -74,6 +74,7 @@ app.post('/jobs', async (req, res) => {
     // }
     res.status(200).jsonp(jobOut);
     // should I get the output file size here?
+    proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
   } catch (err) {
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');
