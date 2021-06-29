@@ -5,6 +5,7 @@ const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./Js
 const {
   DEFAULT_META,
   DEFAULT_VALIDITY,
+  INPUT_DIRECTORY,
   INPUT_MP3_DIR, INPUT_MP3_FILENAME, INPUT_MP4_FILENAME, INPUT_MP4_PATH, TEST_MP3_PATH,
 } = require('./constants');
 const fs = require('fs').promises;
@@ -55,7 +56,8 @@ const filePut = async function filePut(filename, folder, localFilePath) {
 
 const beatcaps = async function beatcaps(input, subfolder) {
   try {
-    const outputPath = path.join(__dirname, '..', '..', 'data', (`${input.name}.vtt`));
+    const outputFile = `${input.name}.vtt`;
+    const outputPath = path.join(__dirname, '..', '..', 'data', (outputFile));
 
     const s3FolderPath = `private/${subfolder}/`;
 
@@ -66,15 +68,31 @@ const beatcaps = async function beatcaps(input, subfolder) {
     memfsToMp3(mp4ToMemfs(fileData));
 
     // 2) use the mp3tojson module
-    const beats = await mp3ToData(INPUT_MP3_DIR + INPUT_MP3_FILENAME, 0.3);
+    const beats = await mp3ToData(INPUT_DIRECTORY + INPUT_MP3_FILENAME, 0.3);
     // 3) use the jsontowebvtt module
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
     const vttOutput = buildWebvtt(vttInput);
+
+    await OutputModel.update({
+      id: input.id,
+    }, {
+      status: 'Complete',
+      type: 'BeatCaps',
+      updatedDate: new Date(),
+    });
     await fs.writeFile(outputPath, vttOutput);
-    await filePut(outputPath, s3FolderPath);
+    await filePut(outputFile, s3FolderPath, outputPath);
+    // TODO: get the output file size
   } catch (err) {
     console.error(err);
+    await OutputModel.update({
+      id: input.id,
+    }, {
+      status: 'Cancelled',
+      updatedDate: new Date(),
+      errorlog: err.message,
+    });
   }
 };
 
@@ -123,13 +141,13 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     if (!results) {
       throw new Error('processing error');
     }
+    // TODO: get the output file size
     await OutputModel.update({
       id: job.id,
     }, {
       status: 'Complete',
       updatedDate: new Date(),
     });
-    // TODO: rename output file
     const jobPath = `${job.name}.mp4`;
     await filePut(jobPath, s3FolderPath, outputPath);
     const deleteProms = [];
