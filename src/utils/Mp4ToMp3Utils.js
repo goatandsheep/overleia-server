@@ -1,4 +1,4 @@
-const ffmpeg = require('ffmpeg.js/ffmpeg-mp4.js');
+const ffmpeg = require('ffmpeg.js/ffmpeg-mp4');
 const fs = require('fs');
 const { INPUT_DIRECTORY } = require('./constants');
 
