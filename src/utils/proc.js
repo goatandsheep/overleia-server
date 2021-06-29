@@ -142,6 +142,8 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     if (!results) {
       throw new Error('processing error');
     }
+    const jobPath = `${job.name}.mp4`;
+    await filePut(jobPath, s3FolderPath, outputPath);
     const size = sizeOf(outputFile, `private/${subfolder}/`);
     await OutputModel.update({
       id: job.id,
@@ -150,8 +152,6 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
       updatedDate: new Date(),
       size: size
     });
-    const jobPath = `${job.name}.mp4`;
-    await filePut(jobPath, s3FolderPath, outputPath);
     const deleteProms = [];
     deleteProms.push(fileDelete(jobPath));
     for (let i = 0, len = inputs.length; i < len; i += 1) {
