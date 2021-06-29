@@ -1,11 +1,11 @@
 const DynamoDbLocal = require('dynamodb-local');
 // const services = require('../src/services');
 
-const {
-  InputModel,
-  OutputModel,
-  TemplateModel,
-} = require('../src/models');
+// const {
+//   InputModel,
+//   OutputModel,
+//   TemplateModel,
+// } = require('../src/models');
 
 const dynamoLocalPort = 8000;
 

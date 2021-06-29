@@ -67,13 +67,12 @@ app.post('/jobs', async (req, res) => {
       async (inputId) => (await InputModel.get({ id: inputId })).file,
     ));
     const template = await TemplateModel.get({ id: req.body.templateId });
-    // if (typeof proc !== 'undefined' && job.type === 'Overleia') {
-    proc.overleia(inputs, template, req.user.identityId, job);
-    // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
-    //   proc.beatcaps();
-    // }
+    if (typeof proc !== 'undefined' && job.type === 'Overleia') {
+      proc.overleia(inputs, template, req.user.identityId, job);
+    } else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
+      proc.beatcaps();
+    }
     res.status(200).jsonp(jobOut);
-    // should I get the output file size here?
   } catch (err) {
     console.error('post/jobs', err);
     res.status(500).send('Bad Request');

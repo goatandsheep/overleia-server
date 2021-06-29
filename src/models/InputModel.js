@@ -27,6 +27,5 @@ module.exports = {
   // add file size 580
   size: {
     type: Number,
-    // required: true,
   },
 };
