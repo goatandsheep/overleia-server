@@ -41,7 +41,6 @@ module.exports = {
   },
   templateId: {
     type: String,
-    required: true,
   },
   type: {
     type: String,

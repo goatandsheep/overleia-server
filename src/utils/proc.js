@@ -80,7 +80,10 @@ const sizeOf = async function sizeOf(filename, folder) {
 
 const beatcaps = async function beatcaps(input, subfolder) {
   try {
-    const outputFile = `${input.name}.vtt`;
+    const inputNameSegs = input.split('.');
+    inputNameSegs.pop();
+    const inputName = inputNameSegs.join('.');
+    const outputFile = `${inputName}.vtt`;
     const outputPath = path.join(__dirname, '..', '..', 'data', (outputFile));
 
     const s3FolderPath = `private/${subfolder}/`;
@@ -88,17 +91,20 @@ const beatcaps = async function beatcaps(input, subfolder) {
 
     let fileData;
     let inputVideo = true;
+    console.log('input', inputName);
     try {
       // 1) use the mp4tomp3 module
-      fileData = await fileFetch(`${input.name}.mp4`, s3FolderPath);
-      memfsToMp3(mp4ToMemfs(fileData));
+      const filePath = await fileFetch(`${inputName}.mp4`, s3FolderPath);
+      fileData = await fs.readFile(filePath);
+      await memfsToMp3(mp4ToMemfs(fileData));
     } catch {
       inputVideo = false;
-      fileData = await fileFetch(`${input.name}.mp3`, s3FolderPath);
+      const filePath = await fileFetch(`${inputName}.mp3`, s3FolderPath);
+      fileData = await fs.readFile(filePath);
     }
 
     // 2) use the mp3tojson module
-    const beats = await mp3ToData(`${INPUT_DIRECTORY}${input.name}.mp3`, 0.3);
+    const beats = await mp3ToData(`${INPUT_DIRECTORY}${inputName}.mp3`, 0.3);
     // 3) use the jsontowebvtt module
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
@@ -107,7 +113,7 @@ const beatcaps = async function beatcaps(input, subfolder) {
     await filePut(outputFile, s3FolderPath, outputPath);
     const size = await sizeOf(outputFile, `private/${subfolder}/`);
     await OutputModel.update({
-      id: input.id,
+      id: input,
     }, {
       status: 'Complete',
       type: 'BeatCaps',

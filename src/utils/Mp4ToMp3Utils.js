@@ -1,5 +1,5 @@
 const ffmpeg = require('ffmpeg.js/ffmpeg-mp4');
-const fs = require('fs');
+const fs = require('fs').promises;
 const { INPUT_DIRECTORY } = require('./constants');
 
 const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3') => {
@@ -16,9 +16,12 @@ const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3') => {
   }
 };
 
-const memfsToMp3 = (memfsData) => {
+const memfsToMp3 = async (memfsData) => {
   try {
-    fs.writeFileSync(INPUT_DIRECTORY + memfsData.name, Buffer.from(memfsData.data));
+    if (!memfsData) {
+      throw new Error('blank memfsData');
+    }
+    await fs.writeFile(INPUT_DIRECTORY + memfsData.name, Buffer.from(memfsData.data));
   } catch (e) {
     console.error(e);
     throw e;

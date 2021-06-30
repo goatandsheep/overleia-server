@@ -66,11 +66,11 @@ app.post('/jobs', async (req, res) => {
     const inputs = await Promise.all(req.body.inputs.map(
       async (inputId) => (await InputModel.get({ id: inputId })).file,
     ));
-    const template = await TemplateModel.get({ id: req.body.templateId });
     if (typeof proc !== 'undefined' && job.type === 'Overleia') {
+      const template = await TemplateModel.get({ id: req.body.templateId });
       proc.overleia(inputs, template, req.user.identityId, job);
     } else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
-      proc.beatcaps();
+      proc.beatcaps(inputs[0], req.user.identityId);
     }
     res.status(200).jsonp(jobOut);
   } catch (err) {
