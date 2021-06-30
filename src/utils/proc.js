@@ -1,7 +1,8 @@
+
+const fs = require('fs').promises;
+const AWS = require('aws-sdk');
+const path = require('path');
 const pip = require('overleia');
-const { mp4ToMemfs, memfsToMp3 } = require('./Mp4ToMp3Utils');
-const { mp3ToData } = require('./Mp3ToJsonUtils');
-const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./JsonToWebvttUtils');
 const {
   DEFAULT_META,
   DEFAULT_VALIDITY,
@@ -12,9 +13,10 @@ const {
   INPUT_MP4_PATH,
   TEST_MP3_PATH,
 } = require('./constants');
-const fs = require('fs').promises;
-const AWS = require('aws-sdk');
-const path = require('path');
+const { mp4ToMemfs, memfsToMp3 } = require('./Mp4ToMp3Utils');
+const { mp3ToData } = require('./Mp3ToJsonUtils');
+const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./JsonToWebvttUtils');
+
 const { OutputModel } = require('../models');
 
 const s3 = new AWS.S3();
@@ -38,7 +40,13 @@ const fileFetch = async function fileFetch(filename, folder) {
       Key: folder + filename,
     };
     const fileBin = await s3.getObject(params).promise();
-    const pathString = path.join(__dirname, '..', '..', 'data', filename);
+    const pathFolder = path.join(__dirname, '..', '..', 'data');
+    const pathString = path.join(pathFolder, filename);
+    try {
+      await (await fs.stat(pathFolder)).isDirectory();
+    } catch {
+      await fs.mkdir(pathFolder);
+    }
     await fs.writeFile(pathString, fileBin.Body);
     return pathString;
   } catch (err) {
@@ -76,18 +84,21 @@ const beatcaps = async function beatcaps(input, subfolder) {
     const outputPath = path.join(__dirname, '..', '..', 'data', (outputFile));
 
     const s3FolderPath = `private/${subfolder}/`;
+    console.log('beatcaps');
 
     let fileData;
+    let inputVideo = true;
     try {
       // 1) use the mp4tomp3 module
       fileData = await fileFetch(`${input.name}.mp4`, s3FolderPath);
       memfsToMp3(mp4ToMemfs(fileData));
     } catch {
+      inputVideo = false;
       fileData = await fileFetch(`${input.name}.mp3`, s3FolderPath);
     }
 
     // 2) use the mp3tojson module
-    const beats = await mp3ToData(INPUT_DIRECTORY + INPUT_MP3_FILENAME, 0.3);
+    const beats = await mp3ToData(`${INPUT_DIRECTORY}${input.name}.mp3`, 0.3);
     // 3) use the jsontowebvtt module
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
@@ -103,6 +114,13 @@ const beatcaps = async function beatcaps(input, subfolder) {
       updatedDate: new Date(),
       size,
     });
+    const deleteProms = [];
+    deleteProms.push(fileDelete(outputPath));
+    deleteProms.push(fileDelete(`${input.name}.mp3`));
+    if (inputVideo) {
+      deleteProms.push(fileDelete(`${input.name}.mp4`));
+    }
+    await Promise.all(deleteProms);
   } catch (err) {
     console.error(err);
     await OutputModel.update({
