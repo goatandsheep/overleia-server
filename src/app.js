@@ -202,14 +202,15 @@ app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
+    // should I get the input file size here?
+    const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
     const file = await InputModel.create({
       file: req.body.file,
       id,
       owner: req.user.identityId,
       status: 'In Progress',
+      size,
     });
-    // should I get the input file size here?
-    proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);

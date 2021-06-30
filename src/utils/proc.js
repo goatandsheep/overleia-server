@@ -6,7 +6,11 @@ const {
   DEFAULT_META,
   DEFAULT_VALIDITY,
   INPUT_DIRECTORY,
-  INPUT_MP3_DIR, INPUT_MP3_FILENAME, INPUT_MP4_FILENAME, INPUT_MP4_PATH, TEST_MP3_PATH,
+  INPUT_MP3_DIR,
+  NPUT_MP3_FILENAME,
+  INPUT_MP4_FILENAME,
+  INPUT_MP4_PATH,
+  TEST_MP3_PATH,
 } = require('./constants');
 const fs = require('fs').promises;
 const AWS = require('aws-sdk');
@@ -54,6 +58,18 @@ const filePut = async function filePut(filename, folder, localFilePath) {
   return s3.putObject(params).promise();
 };
 
+/**
+ * get file size
+ */
+const sizeOf = async function sizeOf(filename, folder) {
+  const params = {
+    Key: folder + filename,
+    Bucket: fileBucket,
+  };
+  const head = await s3.headObject(params).promise();
+  return head.ContentLength;
+};
+
 const beatcaps = async function beatcaps(input, subfolder) {
   try {
     const outputFile = `${input.name}.vtt`;
@@ -78,16 +94,15 @@ const beatcaps = async function beatcaps(input, subfolder) {
     const vttOutput = buildWebvtt(vttInput);
     await fs.writeFile(outputPath, vttOutput);
     await filePut(outputFile, s3FolderPath, outputPath);
-    const size = sizeOf(outputFile, `private/${subfolder}/`);
+    const size = await sizeOf(outputFile, `private/${subfolder}/`);
     await OutputModel.update({
       id: input.id,
     }, {
       status: 'Complete',
       type: 'BeatCaps',
       updatedDate: new Date(),
-      size: size
+      size,
     });
-    
   } catch (err) {
     console.error(err);
     await OutputModel.update({
@@ -99,19 +114,6 @@ const beatcaps = async function beatcaps(input, subfolder) {
     });
   }
 };
-
-/**
- * get file size
- */
-function sizeOf(filename, folder) {
-  const params = {
-    Key: folder + filename,
-    Bucket: fileBucket,
-  };
-  return s3.headObject(params)
-    .promise()
-    .then((res) => res.ContentLength);
-}
 
 const overleia = async function overleia(inputs, template, subfolder, job) {
   // TODO: initially test with some sample data
@@ -147,13 +149,13 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     }
     const jobPath = `${job.name}.mp4`;
     await filePut(jobPath, s3FolderPath, outputPath);
-    const size = sizeOf(`${job.name}.mp4`, `private/${subfolder}/`);
+    const size = await sizeOf(`${job.name}.mp4`, `private/${subfolder}/`);
     await OutputModel.update({
       id: job.id,
     }, {
       status: 'Complete',
       updatedDate: new Date(),
-      size: size
+      size,
     });
     const deleteProms = [];
     deleteProms.push(fileDelete(jobPath));
