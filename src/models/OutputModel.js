@@ -12,6 +12,7 @@ module.exports = {
   },
   progress: {
     type: Number,
+    default: 1,
   },
   errorlog: {
     type: String,
