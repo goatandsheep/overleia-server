@@ -11,19 +11,19 @@ const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3') => {
 
     return result.MEMFS[0];
   } catch (e) {
-    console.log(e);
+    console.log('mp4ToMemfs', e);
     return e;
   }
 };
 
-const memfsToMp3 = async (memfsData) => {
+const memfsToMp3 = async (filePath, memfsData) => {
   try {
     if (!memfsData) {
       throw new Error('blank memfsData');
     }
-    await fs.writeFile(INPUT_DIRECTORY + memfsData.name, Buffer.from(memfsData.data));
+    await fs.writeFile(filePath, Buffer.from(memfsData.data));
   } catch (e) {
-    console.error(e);
+    console.error('memfsToMp3', e);
     throw e;
   }
 };

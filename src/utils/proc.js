@@ -87,16 +87,15 @@ const beatcaps = async function beatcaps(input, subfolder) {
     const outputPath = path.join(__dirname, '..', '..', 'data', (outputFile));
 
     const s3FolderPath = `private/${subfolder}/`;
-    console.log('beatcaps');
 
     let fileData;
     let inputVideo = true;
-    console.log('input', inputName);
+    const mp3InPath = path.join(__dirname, '..', '..', 'data', `${inputName}.mp3`);
     try {
       // 1) use the mp4tomp3 module
       const filePath = await fileFetch(`${inputName}.mp4`, s3FolderPath);
       fileData = await fs.readFile(filePath);
-      await memfsToMp3(mp4ToMemfs(fileData));
+      await memfsToMp3(mp3InPath, mp4ToMemfs(fileData));
     } catch {
       inputVideo = false;
       const filePath = await fileFetch(`${inputName}.mp3`, s3FolderPath);
@@ -104,7 +103,7 @@ const beatcaps = async function beatcaps(input, subfolder) {
     }
 
     // 2) use the mp3tojson module
-    const beats = await mp3ToData(`${INPUT_DIRECTORY}${inputName}.mp3`, 0.3);
+    const beats = await mp3ToData(mp3InPath, 0.3);
     // 3) use the jsontowebvtt module
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
@@ -120,11 +119,12 @@ const beatcaps = async function beatcaps(input, subfolder) {
       updatedDate: new Date(),
       size,
     });
+
     const deleteProms = [];
-    deleteProms.push(fileDelete(outputPath));
-    deleteProms.push(fileDelete(`${input.name}.mp3`));
+    deleteProms.push(fileDelete(`${inputName}.vtt`));
+    deleteProms.push(fileDelete(`${inputName}.mp3`));
     if (inputVideo) {
-      deleteProms.push(fileDelete(`${input.name}.mp4`));
+      deleteProms.push(fileDelete(`${inputName}.mp4`));
     }
     await Promise.all(deleteProms);
   } catch (err) {
