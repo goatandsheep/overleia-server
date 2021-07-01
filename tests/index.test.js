@@ -9,6 +9,10 @@ const app = require('../src/app');
 // } = require('../src/models');
 const dynamoLocalPort = 8000;
 
+DynamoDbLocal.configureInstaller({
+  installPath: './dynamodblocal-bin'
+});
+
 const testFunction = async (inputsObj, templateObj) => {
   // TODO: create input
   // TODO: get input
