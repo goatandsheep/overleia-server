@@ -78,9 +78,9 @@ const sizeOf = async function sizeOf(filename, folder) {
   return head.ContentLength;
 };
 
-const beatcaps = async function beatcaps(input, subfolder) {
+const beatcaps = async function beatcaps(input, subfolder, job) {
   try {
-    const inputNameSegs = input.split('.');
+    const inputNameSegs = input.file.split('.');
     inputNameSegs.pop();
     const inputName = inputNameSegs.join('.');
     const outputFile = `${inputName}.vtt`;
@@ -110,14 +110,14 @@ const beatcaps = async function beatcaps(input, subfolder) {
     const vttOutput = buildWebvtt(vttInput);
     await fs.writeFile(outputPath, vttOutput);
     await filePut(outputFile, s3FolderPath, outputPath);
-    const size = await sizeOf(outputFile, `private/${subfolder}/`);
+    // const size = await sizeOf(inputName + '.mp4', `private/${subfolder}/`);
     await OutputModel.update({
-      id: input,
+      id: job.id,
     }, {
       status: 'Complete',
       type: 'BeatCaps',
       updatedDate: new Date(),
-      size,
+      size: input.size,
     });
 
     const deleteProms = [];
@@ -127,10 +127,11 @@ const beatcaps = async function beatcaps(input, subfolder) {
       deleteProms.push(fileDelete(`${inputName}.mp4`));
     }
     await Promise.all(deleteProms);
+    console.log('success!');
   } catch (err) {
-    console.error(err);
+    console.error('processing error', err);
     await OutputModel.update({
-      id: input.id,
+      id: job.id,
     }, {
       status: 'Cancelled',
       updatedDate: new Date(),
@@ -153,7 +154,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
   try {
     const fileConfirms = [];
     for (let i = 0, len = inputs.length; i < len; i += 1) {
-      fileConfirms.push(fileFetch(inputs[i], s3FolderPath));
+      fileConfirms.push(fileFetch(inputs[i].file, s3FolderPath));
     }
     pipParams.inputs = await Promise.all(fileConfirms);
 
@@ -184,7 +185,7 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
     const deleteProms = [];
     deleteProms.push(fileDelete(jobPath));
     for (let i = 0, len = inputs.length; i < len; i += 1) {
-      deleteProms.push(fileDelete(inputs[i]));
+      deleteProms.push(fileDelete(inputs[i].file));
     }
     await Promise.all(deleteProms);
     console.log('success!');
