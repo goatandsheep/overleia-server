@@ -126,7 +126,7 @@ describe('my tests', () => {
   it('searching outputs', () => {
     const outputs = app.function.listJobs(owner); 
     return expect(outputs).resolves.toBe(false);
-  })
+  }, 9999999);
   
   afterAll(async () => {
     // teardown db
