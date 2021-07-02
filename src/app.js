@@ -57,7 +57,7 @@ app.get('/jobs/:id', async (req, res) => {
 
 // ABSTRACTION: createJob
 const createJob = async function createJob(id, req, owner) {
-  return OutputModel.create({id, ...req.body, owner: req.user.identityId});
+  return OutputModel.create({ id, ...req.body, owner: req.user.identityId });
 };
 // ABSTRACTION: createJob
 const saveJob = async function saveJob(job) {
@@ -135,7 +135,7 @@ const saveTemplate = async function saveTemplate(template) {
 app.post('/templates/new', async (req, res) => {
   const id = uuidv4();
   try {
-    const template = await createTemplate(id, ...req.body)
+    const template = await createTemplate(id, ...req.body);
     await saveTemplate(template);
     res.status(200).jsonp(template);
   } catch (err) {
@@ -146,10 +146,7 @@ app.post('/templates/new', async (req, res) => {
 
 // ABSTRACTION: get template
 const getTemplate = async function getTemplate(id) {
-  if (TemplateModel.get({ id })) {
-    return true;
-  }
-  return false;
+  return TemplateModel.get({ id });
 };
 
 /**
@@ -159,7 +156,6 @@ app.get('/templates/:id', async (req, res) => {
   try {
     const template = await getTemplate(req.params.id);
     res.status(200).jsonp(template);
-    
   } catch (err) {
     console.error('get/templates/id', err);
     res.status(500).send('Bad Request');
@@ -201,7 +197,6 @@ app.get('/templates', async (req, res) => {
   }
 });
 
-
 // ABSTRACTION: list files
 const listFiles = async function listFiles(owner) {
   return InputModel.scan().filter('owner').eq(owner).exec();
@@ -239,7 +234,9 @@ app.get('/file/:id', async (req, res) => {
 
 // ABSTRACTION: create input
 const createInput = async function createInput(file, id, owner, status = 'In Progress') {
-  return InputModel.create({ file, id, owner, status });
+  return InputModel.create({
+    file, id, owner, status,
+  });
 };
 
 /**
