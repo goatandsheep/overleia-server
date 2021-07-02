@@ -80,16 +80,20 @@ describe('my tests', () => {
  // );
   
   // tests
+  
+  /*
   it('create input 1', () => {
     // TODO: abstract from app.js
-    const inputProm = app.functions.createInput('the-ask', 'pee', 'pee');
+    const inputProm = app.functions.createInput('the-ask.mp4', 'pee', 'us-east-1:4f9039ff-2a9e-49c0-8464-443f9a070f7f');
     return expect(inputProm).resolves.toBe(false);
   }, 9999999);
+  */
 
   it('get template test', () => {
-    const myProm = app.functions.getTemplate('1231232');
-    return expect(myProm).resolves.toBe(false);
+    const myProm = app.functions.getTemplate('0ac5c561-15dd-41d6-8448-41b427f9c1d8');
+    return expect(myProm).resolves.toBe(true);
   }, 9999999);
+
   /*
   it('list files test', () => {
     // TODO: abstract from app.js

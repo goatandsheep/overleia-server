@@ -146,7 +146,10 @@ app.post('/templates/new', async (req, res) => {
 
 // ABSTRACTION: get template
 const getTemplate = async function getTemplate(id) {
-  return TemplateModel.get({ id });
+  if (TemplateModel.get({ id })) {
+    return true;
+  }
+  return false;
 };
 
 /**
