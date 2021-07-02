@@ -90,7 +90,7 @@ describe('my tests', () => {
     const myProm = app.functions.getTemplate('1231232');
     return expect(myProm).resolves.toBe(false);
   }, 9999999);
-  
+  /*
   it('list files test', () => {
     // TODO: abstract from app.js
     const files = InputModel.scan().exec();
@@ -127,7 +127,7 @@ describe('my tests', () => {
     const outputs = app.function.listJobs(owner); 
     return expect(outputs).resolves.toBe(false);
   }, 9999999);
-  
+  */
   afterAll(async () => {
     // teardown db
     await DynamoDbLocal.stop(dynamoLocalPort);
