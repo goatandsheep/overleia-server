@@ -12,6 +12,7 @@ module.exports = {
   },
   progress: {
     type: Number,
+    default: 1,
   },
   errorlog: {
     type: String,
@@ -41,7 +42,6 @@ module.exports = {
   },
   templateId: {
     type: String,
-    required: true,
   },
   type: {
     type: String,
@@ -59,5 +59,9 @@ module.exports = {
   owner: {
     type: String,
     required: true,
+  },
+  // add file size 580
+  size: {
+    type: Number,
   },
 };

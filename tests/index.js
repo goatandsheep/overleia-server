@@ -1,13 +1,17 @@
 const DynamoDbLocal = require('dynamodb-local');
 // const services = require('../src/services');
 
-const {
-  InputModel,
-  OutputModel,
-  TemplateModel,
-} = require('../src/models');
+// const {
+//   InputModel,
+//   OutputModel,
+//   TemplateModel,
+// } = require('../src/models');
 
 const dynamoLocalPort = 8000;
+
+DynamoDbLocal.configureInstaller({
+  installPath: './dynamodblocal-bin'
+});
 
 DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']) // if you want to share with Javascript Shell
   .then(async () => {

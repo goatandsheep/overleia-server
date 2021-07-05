@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
-    "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
-    "lambda": "node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js",
+    "dev": "cross-env NODE_ENV=development node app",
+    "local": "node src/app.js",
+    "lambda": "node index.js",
     "test": "node tests",
     "pack": "npm-pack-all-zip --dist=dist",
     "lint": "eslint src",
@@ -17,12 +17,15 @@
   "dependencies": {
     "@vendia/serverless-express": "^4.3.4",
     "aws-sdk": "^2.896.0",
+    "beatcaps-library": "git+https://github.com/goatandsheep/beatcaps-library.git",
     "body-parser": "^1.19.0",
     "cognito-express": "^2.0.18",
     "cors": "^2.8.5",
     "dotenv-extended": "^2.9.0",
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
+    "ffmpeg.js": "^4.2.9003",
+    "node-webvtt": "^1.9.1",
     "overleia": "^3.2.1",
     "uuid": "^8.3.2"
   },

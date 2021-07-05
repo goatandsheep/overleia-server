@@ -64,14 +64,14 @@ app.post('/jobs', async (req, res) => {
     await job.save();
 
     const inputs = await Promise.all(req.body.inputs.map(
-      async (inputId) => (await InputModel.get({ id: inputId })).file,
+      async (inputId) => (await InputModel.get({ id: inputId })),
     ));
-    const template = await TemplateModel.get({ id: req.body.templateId });
-    // if (typeof proc !== 'undefined' && job.type === 'Overleia') {
-    proc.overleia(inputs, template, req.user.identityId, job);
-    // else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
-    //   proc.beatcaps();
-    // }
+    if (typeof proc !== 'undefined' && job.type === 'Overleia') {
+      const template = await TemplateModel.get({ id: req.body.templateId });
+      proc.overleia(inputs, template, req.user.identityId, job);
+    } else if (typeof proc !== 'undefined' && job.type === 'BeatCaps') {
+      proc.beatcaps(inputs[0], req.user.identityId, job);
+    }
     res.status(200).jsonp(jobOut);
   } catch (err) {
     console.error('post/jobs', err);
@@ -202,11 +202,14 @@ app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
+    // should I get the input file size here?
+    const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
     const file = await InputModel.create({
       file: req.body.file,
       id,
       owner: req.user.identityId,
       status: 'In Progress',
+      size,
     });
     res.status(200).jsonp(file);
   } catch (err) {
