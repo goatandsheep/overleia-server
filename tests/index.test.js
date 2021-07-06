@@ -1,12 +1,13 @@
 const DynamoDbLocal = require('dynamodb-local');
 // const express = require('express');
 const app = require('../src/app');
+const { v4: uuidv4 } = require('uuid');
 // const services = require('../src/services');
-// const {
-//   InputModel,
-//   OutputModel,
-//   TemplateModel,
-// } = require('../src/models');
+const {
+   InputModel,
+   OutputModel,
+   TemplateModel,
+ } = require('../src/models');
 const dynamoLocalPort = 8000;
 
 DynamoDbLocal.configureInstaller({
@@ -32,6 +33,18 @@ DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb'])
     console.error(err)
   })
 */
+const thisId = uuidv4();
+const template1 = TemplateModel.create({
+  id: thisId,
+  height: 1080,
+  name: 'template1',
+  views: [{
+    height: 80,
+    width: 100,
+    x: 15,
+    y: 150
+  }]
+});
 
 beforeAll(() => DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']));
 
@@ -46,22 +59,9 @@ describe('my tests', () => {
     const in1 = await InputModel.create({ file: 'test1.mp4' });
     const in2 = await InputModel.create({ file: 'test2.mp4' });
     const in3 = await InputModel.create({ file: 'test3.mp4' });
-
-    // TODO: abstract 
-    const template1 = await TemplateModel.create({
-      height: 1080,
-      name: 'template1',
-      views: [{
-        height: 80,
-        width: 100,
-        x: 15,
-      }, {
-        height: 80,
-        width: 100,
-        x: 150,
-      }],
-    });
-
+    */
+  
+    /*
     const template2 = await TemplateModel.create({
       height: 1080,
       name: 'template1',
@@ -90,7 +90,7 @@ describe('my tests', () => {
   */
 
   it('get template test', () => {
-    const myProm = app.functions.getTemplate('0ac5c561-15dd-41d6-8448-41b427f9c1d8');
+    const myProm = app.functions.getTemplate(template1.id);
     return expect(myProm).resolves.toBe(true);
   }, 9999999);
 
