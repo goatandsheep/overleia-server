@@ -33,52 +33,43 @@ DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb'])
     console.error(err)
   })
 */
-const thisId = uuidv4();
-const template1 = TemplateModel.create({
-  id: thisId,
-  height: 1080,
-  name: 'template1',
-  views: [{
-    height: 80,
-    width: 100,
-    x: 15,
-    y: 150
-  }]
-});
 
 beforeAll(() => DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']));
 
-describe('my tests', () => {
+describe('my tests', async () => {
+  // setup the db
+  // running dinomaurDB
+  // DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']),
 
-    // setup the db
-    // running dinomaurDB
-   // DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']),
-
-    /*
+  const template1Id = uuidv4();
+  const template1 = {
+    height: 1080,
+    name: 'template1',
+    views: [{
+      height: 80,
+      width: 100,
+      x: 15,
+      y: 150,
+    }, {
+      height: 1000,
+      width: 100,
+      x: 150,
+      y: 0,
+    }],
+  };
+  it('create template 1', () => {
+    const inputProm = app.functions.createTemplate(template1Id, template1);
+    // TemplateModel.populate()
+    return expect(inputProm).resolves.toBe({ id: template1Id, ...template1 });
+  }, 9999999);
+  /*
     // creating files and 
     const in1 = await InputModel.create({ file: 'test1.mp4' });
     const in2 = await InputModel.create({ file: 'test2.mp4' });
     const in3 = await InputModel.create({ file: 'test3.mp4' });
-    */
-  
-    /*
-    const template2 = await TemplateModel.create({
-      height: 1080,
-      name: 'template1',
-      views: [{
-        height: 1000,
-        width: 100,
-        x: 15,
-      }, {
-        height: 1000,
-        width: 100,
-        x: 150,
-      }],
-    });
-    */
-    // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
- // );
-  
+  */
+  // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
+  // );
   // tests
   
   /*
@@ -90,8 +81,8 @@ describe('my tests', () => {
   */
 
   it('get template test', () => {
-    const myProm = app.functions.getTemplate(template1.id);
-    return expect(myProm).resolves.toBe(true);
+    const myProm = app.functions.getTemplate(template1Id);
+    return expect(myProm).resolves.toBe({ id: template1Id, ...template1 });
   }, 9999999);
 
   /*

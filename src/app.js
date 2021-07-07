@@ -118,13 +118,18 @@ app.get('/jobs', async (req, res) => {
   }
 });
 
-// ABSTRACTION: create template 
-const createTemplate = async function createTemplate(id, req) {
-  template = TemplateModel.create({ id, ...req.body });
+/**
+ * ABSTRACTION: create template
+ * @param {String} id
+ * @param {Object} templateData
+ * @returns {Promise<Template>}
+ */
+const createTemplate = async function createTemplate(id, templateData) {
+  const template = TemplateModel.create({ id, ...templateData });
   return template;
 };
 
-// ABSTRACTION: save template 
+// ABSTRACTION: save template
 const saveTemplate = async function saveTemplate(template) {
   return template.save();
 };
@@ -271,9 +276,9 @@ app.get('/element/:id', async (req, res) => {
 app.functions.getTemplate = getTemplate;
 app.functions.listFiles = listFiles;
 app.functions.createInput = createInput;
-app.functions.createTemplae = createTemplate;
+app.functions.createTemplate = createTemplate;
 app.functions.saveTemplate = saveTemplate;
-app.functions.createJob = createJob; 
+app.functions.createJob = createJob;
 app.functions.saveJob = saveJob;
 app.functions.listJobs = listJobs;
 
