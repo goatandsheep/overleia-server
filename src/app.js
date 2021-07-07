@@ -261,8 +261,7 @@ app.post('/file', async (req, res) => {
 
 /**
  * get a element
- */
-app.get('/element/:id', async (req, res) => {
+ * app.get('/element/:id', async (req, res) => {
   try {
     const element = await ElementModel.get({ id: req.params.id });
     res.status(200).jsonp(element);
@@ -271,6 +270,7 @@ app.get('/element/:id', async (req, res) => {
     res.status(500).send('Bad Request');
   }
 });
+ */
 
 // app.functions
 app.functions.getTemplate = getTemplate;
