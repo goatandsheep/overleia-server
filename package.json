@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node --experimental-wasm-threads --experimental-wasm-bulk-memory app",
-    "local": "node --experimental-wasm-threads --experimental-wasm-bulk-memory src/app.js",
-    "lambda": "node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js",
+    "dev": "cross-env NODE_ENV=development node app",
+    "local": "node src/app.js",
+    "lambda": "node index.js",
     "test": "jest",
     "pack": "npm-pack-all-zip --dist=dist",
     "lint": "eslint src",

@@ -25,14 +25,6 @@ const testFunction = async (inputsObj, templateObj) => {
   // TODO: create output
   // TODO: search outputs
 }
-/*
-DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb'])
-  .then(async () => {
-    console.log('running dynamo')
-  }).catch((err) => {
-    console.error(err)
-  })
-*/
 
 beforeAll(() => DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']));
 
@@ -41,6 +33,7 @@ describe('my tests', async () => {
   // running dinomaurDB
   // DynamoDbLocal.launch(dynamoLocalPort, null, ['-sharedDb']),
 
+  // declare template object 
   const template1Id = uuidv4();
   const template1 = {
     height: 1080,
@@ -57,34 +50,37 @@ describe('my tests', async () => {
       y: 0,
     }],
   };
+
+  // create the template 
   it('create template 1', () => {
     const inputProm = app.functions.createTemplate(template1Id, template1);
     // TemplateModel.populate()
     return expect(inputProm).resolves.toEqual({ id: template1Id, ...template1 });
   }, 9999999);
-  /*
-    // creating files and 
-    const in1 = await InputModel.create({ file: 'test1.mp4' });
-    const in2 = await InputModel.create({ file: 'test2.mp4' });
-    const in3 = await InputModel.create({ file: 'test3.mp4' });
-  */
-  // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
-  // );
-  // tests
-  
-  /*
-  it('create input 1', () => {
-    // TODO: abstract from app.js
-    const inputProm = app.functions.createInput('the-ask.mp4', 'pee', 'us-east-1:4f9039ff-2a9e-49c0-8464-443f9a070f7f');
-    return expect(inputProm).resolves.toBe(false);
-  }, 9999999);
-  */
 
+  // get the template
   it('get template test', () => {
     const myProm = app.functions.getTemplate(template1Id);
     return expect(myProm).resolves.toEqual({ id: template1Id, ...template1 });
   }, 9999999);
+  
+  // declare input object
+  const inputId = uuidv4(); 
+  const in1 = {
+    file: 'abc', 
+    owner: 'def',
+    status: 'In Progress',
+  };
 
+  // create the input 
+  it('create input 1', () => {
+    const inputProm = app.functions.createInput(in1.file, inputId, in1.owner);
+    return expect(inputProm).resolves.toEqual({file: in1.file, id: inputId, owner: in1.owner, status: 'In Progress'});
+  }, 9999999);
+  
+
+  // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
+  // );
   /*
   it('list files test', () => {
     // TODO: abstract from app.js
@@ -93,13 +89,7 @@ describe('my tests', async () => {
     return expect(fileProm).resolves.toBe(false);
   }, 9999999);
   
-  it('creating template', () => {
-    // TODO: abstract from app.js
-    const template = app.functions.createTemplate(id, req);
-    const saveTemplate = app.functions.saveTemplate(template);
-    return expect(saveTemplate).resolves.toBe(false);
-  }, 9999999);
-
+ 
   it('creating outputs', () => {
     // TODO: abstract from app.js
     const output1 = app.functions.createJob({

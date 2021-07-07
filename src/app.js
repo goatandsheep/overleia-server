@@ -251,7 +251,6 @@ app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
-    // should I get the input file size here?
     const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
     const file = await InputModel.create({
       file: req.body.file,
