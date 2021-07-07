@@ -83,30 +83,29 @@ describe('my tests', async () => {
     const listProm = await app.functions.listFiles(in1.owner);
     return expect(JSON.stringify(listProm)).toEqual(JSON.stringify([{owner: in1.owner, file: in1.file, id: inputId, status: 'In Progress'}]));
   }, 9999999);
-  
 
-  // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
-  // );
-  /*
-  
- 
-  it('creating outputs', () => {
-    // TODO: abstract from app.js
-    const output1 = app.functions.createJob({
-      name: 'output1.mp4',
-      inputs: [in1.id, in2.id, in3.id],
-      templateId: template1.id,
-    });
-    const saveJob1 = app.functions.saveJob(output1);
+  // declare output object
+  const outputId = uuidv4();
+  const out1 = {
+    name: 'test1', 
+    progress: 1,
+    creationDate: 'today',
+    inputs: 'abc',
+    status: 'In Progress',
+    type: 'Overleia', 
+    updatedDate: 'today',
+    owner: 'def',
+  };
 
-    const output2 = app.functions.createJob({
-      name: 'output1.mp4',
-      inputs: [in2.id, in3.id, in1.id],
-      templateId: template2.id,
-    });
-    const saveJob2 = app.functions.saveJob(output2);
-    return expect(saveJob1).resolves.toBe(false) && expect(saveJob1).resolves.toBe(false);
+  // create the output 
+  it('creating output test', () => {
+    const outputProm = app.functions.createJob({outputId, ...out1, owner: out1.owner});
+    return expect(outputProm).resolves.toEqual({file: in1.file, id: outputId, owner: in1.owner, status: 'In Progress'});
   }, 9999999);
+  
+  // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
+
+  /*
 
   it('searching outputs', () => {
     const outputs = app.function.listJobs(owner); 

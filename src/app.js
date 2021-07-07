@@ -56,9 +56,10 @@ app.get('/jobs/:id', async (req, res) => {
 });
 
 // ABSTRACTION: createJob
-const createJob = async function createJob(id, req, owner) {
-  return OutputModel.create({ id, ...req.body, owner: req.user.identityId });
+const createJob = async function createJob(id, outputData, owner) {
+  return OutputModel.create({id, ...outputData, owner});
 };
+
 // ABSTRACTION: createJob
 const saveJob = async function saveJob(job) {
   return job.save();
