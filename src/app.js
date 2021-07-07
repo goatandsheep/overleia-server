@@ -213,8 +213,8 @@ const listFiles = async function listFiles(owner) {
 app.get('/file/list', async (req, res) => {
   try {
     const files = await listFiles(req.user.identityId);
-    if (listFiles(files)) {
-      res.status(200).jsonp(files);
+    if (listFiles(req.user.identityId)) {
+      res.status(200).jsonp(req.user.identityId);
     } else {
       res.status(400).send('No files found');
     }
