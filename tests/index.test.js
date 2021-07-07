@@ -60,7 +60,7 @@ describe('my tests', async () => {
   it('create template 1', () => {
     const inputProm = app.functions.createTemplate(template1Id, template1);
     // TemplateModel.populate()
-    return expect(inputProm).resolves.toBe({ id: template1Id, ...template1 });
+    return expect(inputProm).resolves.toEqual({ id: template1Id, ...template1 });
   }, 9999999);
   /*
     // creating files and 
@@ -82,7 +82,7 @@ describe('my tests', async () => {
 
   it('get template test', () => {
     const myProm = app.functions.getTemplate(template1Id);
-    return expect(myProm).resolves.toBe({ id: template1Id, ...template1 });
+    return expect(myProm).resolves.toEqual({ id: template1Id, ...template1 });
   }, 9999999);
 
   /*
