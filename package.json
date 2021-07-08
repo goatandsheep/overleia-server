@@ -9,8 +9,8 @@
     "lambda": "node index.js",
     "test": "jest",
     "pack": "npm-pack-all-zip --dist=dist",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix"
   },
   "author": "Kemal Ahmed",
   "license": "ISC",

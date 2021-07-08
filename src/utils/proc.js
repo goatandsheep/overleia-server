@@ -1,4 +1,3 @@
-
 const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const path = require('path');
