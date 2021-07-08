@@ -98,9 +98,9 @@ describe('my tests', async () => {
   };
 
   // create the output 
-  it('creating output test', () => {
-    const outputProm = app.functions.createJob({outputId, ...out1, owner: out1.owner});
-    return expect(outputProm).resolves.toEqual({file: in1.file, id: outputId, owner: in1.owner, status: 'In Progress'});
+  it('creating output test', async () => {
+    const outputProm = await app.functions.createJob({outputId, ...out1, owner: out1.owner});
+    return expect(JSON.stringify(outputProm)).toEqual(JSON.stringify({file: in1.file, id: outputId, owner: in1.owner, status: 'In Progress'}));
   }, 9999999);
   
   // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
