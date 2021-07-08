@@ -18,7 +18,7 @@ const InputSchema = require('./InputModel');
 const OutputSchema = require('./OutputModel');
 const TemplateResponse = require('./TemplateResponse');
 
-const buildLocalDb = (typeof process.env.LOCAL_DYNAMODB !== 'undefined') && (process.env.LOCAL_DYNAMODB === 'true') ? { create: true } : {};
+const buildLocalDb = (typeof process.env.LOCAL_DYNAMODB !== 'undefined') && (process.env.LOCAL_DYNAMODB === 'true') ? { create: true, timestamps: true } : { timestamps: true };
 
 const InputModel = dynamoose.model('Input', new dynamoose.Schema(InputSchema), buildLocalDb);
 const OutputModel = dynamoose.model('Output', new dynamoose.Schema(OutputSchema), buildLocalDb);

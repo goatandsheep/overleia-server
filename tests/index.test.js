@@ -81,7 +81,7 @@ describe('my tests', async () => {
   // list the files
   it('list files test', async () => {
     const listProm = await app.functions.listFiles(in1.owner);
-    return expect(JSON.stringify(listProm)).toEqual(JSON.stringify([{owner: in1.owner, file: in1.file, id: inputId, status: 'In Progress'}]));
+    return expect(listProm).toEqual([{ owner: in1.owner, file: in1.file, id: inputId, status: 'In Progress' }]);
   }, 9999999);
 
   // declare output object
@@ -99,16 +99,17 @@ describe('my tests', async () => {
     owner: 'def',
   };
 
-  // create the output 
+  // create the output
   it('creating output test', async () => {
-    const outputProm = await app.functions.createJob({outputId, ...out1, owner: out1.owner});
-    return expect(JSON.stringify(outputProm)).toEqual(JSON.stringify({outputId, ...out1}));
+    const outputProm = await app.functions.createJob({ id: outputId, ...out1, owner: out1.owner});
+    return expect(outputProm).toEqual({ id: outputId, ...out1 });
   }, 9999999);
 
   // list the jobs
   it('searching outputs', async () => {
-    const listProm = await app.functions.listJobs(out1.owner); 
-    return expect(JSON.stringify(listProm)).toEqual(JSON.stringify({id: outputId, ...out1}));
+    const listProm = await app.functions.listJobs(out1.owner);
+    const out1Check = { ...out1, creationDate: outputCreateDate.toISOString(), updatedDate: outputUpdateDate.toISOString() };
+    return expect(listProm).toEqual([{ id: outputId, ...out1Check }]);
   }, 9999999);
 
   // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, 

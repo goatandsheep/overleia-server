@@ -93,7 +93,8 @@ app.post('/jobs', async (req, res) => {
 
 // ABSTRACTION: listJobs
 const listJobs = async function listJobs(owner) {
-  return OutputModel.scan().filter('owner').eq(owner).exec();
+  const jobs = await OutputModel.scan().filter('owner').eq(owner).exec();
+  return jobs.map((job) => job.toJSON());
 };
 
 /**
@@ -205,7 +206,8 @@ app.get('/templates', async (req, res) => {
 
 // ABSTRACTION: list files
 const listFiles = async function listFiles(owner) {
-  return InputModel.scan().filter('owner').eq(owner).exec();
+  const files = await InputModel.scan().filter('owner').eq(owner).exec();
+  return files.map((file) => file.toJSON());
 };
 
 /**
