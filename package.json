@@ -7,10 +7,10 @@
     "dev": "cross-env NODE_ENV=development node app",
     "local": "node src/app.js",
     "lambda": "node index.js",
-    "test": "node tests",
+    "test": "jest",
     "pack": "npm-pack-all-zip --dist=dist",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix"
   },
   "author": "Kemal Ahmed",
   "license": "ISC",
@@ -21,7 +21,7 @@
     "body-parser": "^1.19.0",
     "cognito-express": "^2.0.18",
     "cors": "^2.8.5",
-    "dotenv-extended": "^2.9.0",
+    "dotenv-flow": "^3.2.0",
     "dynamoose": "^2.5.0",
     "express": "^4.17.1",
     "ffmpeg.js": "^4.2.9003",

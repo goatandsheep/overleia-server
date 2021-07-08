@@ -14,7 +14,6 @@ module.exports = {
     type: String,
     required: true,
   },
-  // adding status 549
   status: {
     type: String,
     enum: [

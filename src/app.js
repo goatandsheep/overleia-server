@@ -1,7 +1,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
-require('dotenv-extended').load();
+require('dotenv-flow').config();
 
 const app = express();
 
@@ -40,6 +40,8 @@ if (typeof process.env.COGNITO_POOL_ID !== 'undefined' && process.env.COGNITO_PO
   app.use(authenticate);
 }
 
+app.functions = {};
+
 /**
  * get info about a single job
  */
@@ -53,6 +55,16 @@ app.get('/jobs/:id', async (req, res) => {
   }
 });
 
+// ABSTRACTION: createJob
+const createJob = async function createJob(job) {
+  return OutputModel.create(job);
+};
+
+// ABSTRACTION: createJob
+const saveJob = async function saveJob(job) {
+  return job.save();
+};
+
 /**
  * create job / apply template to file
  */
@@ -60,8 +72,8 @@ app.post('/jobs', async (req, res) => {
   const id = uuidv4();
   try {
     const jobOut = { id, ...req.body, owner: req.user.identityId };
-    const job = await OutputModel.create(jobOut);
-    await job.save();
+    const job = await createJob(jobOut);
+    await saveJob(job);
 
     const inputs = await Promise.all(req.body.inputs.map(
       async (inputId) => (await InputModel.get({ id: inputId })),
@@ -79,6 +91,12 @@ app.post('/jobs', async (req, res) => {
   }
 });
 
+// ABSTRACTION: listJobs
+const listJobs = async function listJobs(owner) {
+  const jobs = await OutputModel.scan().filter('owner').eq(owner).exec();
+  return jobs.map((job) => job.toJSON());
+};
+
 /**
  * get jobs / outputs list
  */
@@ -89,7 +107,7 @@ app.get('/jobs', async (req, res) => {
       // TODO: sort by status
       jobs = await OutputModel.scan().using('statusIndex').exec();
     } else {
-      jobs = await OutputModel.scan().filter('owner').eq(req.user.identityId).exec();
+      jobs = await listJobs(req.user.identityId);
     }
     const out = {
       elements: jobs,
@@ -103,13 +121,29 @@ app.get('/jobs', async (req, res) => {
 });
 
 /**
+ * ABSTRACTION: create template
+ * @param {String} id
+ * @param {Object} templateData
+ * @returns {Promise<Template>}
+ */
+const createTemplate = async function createTemplate(id, templateData) {
+  const template = TemplateModel.create({ id, ...templateData });
+  return template;
+};
+
+// ABSTRACTION: save template
+const saveTemplate = async function saveTemplate(template) {
+  return template.save();
+};
+
+/**
  * create new template
  */
 app.post('/templates/new', async (req, res) => {
   const id = uuidv4();
   try {
-    const template = await TemplateModel.create({ id, ...req.body });
-    await template.save();
+    const template = await createTemplate(id, ...req.body);
+    await saveTemplate(template);
     res.status(200).jsonp(template);
   } catch (err) {
     console.error('post/templates/new', err);
@@ -117,12 +151,17 @@ app.post('/templates/new', async (req, res) => {
   }
 });
 
+// ABSTRACTION: get template
+const getTemplate = async function getTemplate(id) {
+  return TemplateModel.get({ id });
+};
+
 /**
  * get template
  */
 app.get('/templates/:id', async (req, res) => {
   try {
-    const template = await TemplateModel.get({ id: req.params.id });
+    const template = await getTemplate(req.params.id);
     res.status(200).jsonp(template);
   } catch (err) {
     console.error('get/templates/id', err);
@@ -165,13 +204,19 @@ app.get('/templates', async (req, res) => {
   }
 });
 
+// ABSTRACTION: list files
+const listFiles = async function listFiles(owner) {
+  const files = await InputModel.scan().filter('owner').eq(owner).exec();
+  return files.map((file) => file.toJSON());
+};
+
 /**
  * list uploaded files
  */
 app.get('/file/list', async (req, res) => {
   try {
-    const files = await InputModel.scan().filter('owner').eq(req.user.identityId).exec();
-    if (files.length) {
+    const files = await listFiles(req.user.identityId);
+    if (files) {
       res.status(200).jsonp(files);
     } else {
       res.status(400).send('No files found');
@@ -195,6 +240,13 @@ app.get('/file/:id', async (req, res) => {
   }
 });
 
+// ABSTRACTION: create input
+const createInput = async function createInput(file, id, owner, status = 'In Progress') {
+  return InputModel.create({
+    file, id, owner, status,
+  });
+};
+
 /**
  * upload file
  */
@@ -202,7 +254,6 @@ app.post('/file', async (req, res) => {
   try {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
-    // should I get the input file size here?
     const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
     const file = await InputModel.create({
       file: req.body.file,
@@ -217,6 +268,29 @@ app.post('/file', async (req, res) => {
     res.status(500).send('Bad Request');
   }
 });
+
+/**
+ * get a element
+ * app.get('/element/:id', async (req, res) => {
+  try {
+    const element = await ElementModel.get({ id: req.params.id });
+    res.status(200).jsonp(element);
+  } catch (err) {
+    console.error('get/element', err);
+    res.status(500).send('Bad Request');
+  }
+});
+ */
+
+// app.functions
+app.functions.getTemplate = getTemplate;
+app.functions.listFiles = listFiles;
+app.functions.createInput = createInput;
+app.functions.createTemplate = createTemplate;
+app.functions.saveTemplate = saveTemplate;
+app.functions.createJob = createJob;
+app.functions.saveJob = saveJob;
+app.functions.listJobs = listJobs;
 
 // keep at the bottom
 
