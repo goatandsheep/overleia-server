@@ -86,14 +86,16 @@ describe('my tests', async () => {
 
   // declare output object
   const outputId = uuidv4();
+  const outputCreateDate = new Date(1577836800000);
+  const outputUpdateDate = new Date(1625703608107);
   const out1 = {
     name: 'test1', 
     progress: 1,
-    creationDate: 'today',
-    inputs: 'abc',
+    creationDate: outputCreateDate,
+    inputs: [template1Id, template1Id],
     status: 'In Progress',
     type: 'Overleia', 
-    updatedDate: 'today',
+    updatedDate: outputUpdateDate,
     owner: 'def',
   };
 

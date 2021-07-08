@@ -56,8 +56,8 @@ app.get('/jobs/:id', async (req, res) => {
 });
 
 // ABSTRACTION: createJob
-const createJob = async function createJob(id, outputData, owner) {
-  return OutputModel.create({id, ...outputData, owner});
+const createJob = async function createJob(job) {
+  return OutputModel.create(job);
 };
 
 // ABSTRACTION: createJob
@@ -214,8 +214,8 @@ const listFiles = async function listFiles(owner) {
 app.get('/file/list', async (req, res) => {
   try {
     const files = await listFiles(req.user.identityId);
-    if (listFiles(req.user.identityId)) {
-      res.status(200).jsonp(req.user.identityId);
+    if (files) {
+      res.status(200).jsonp(files);
     } else {
       res.status(400).send('No files found');
     }
