@@ -93,7 +93,7 @@ describe('my tests', async () => {
     progress: 1,
     creationDate: outputCreateDate,
     inputs: [template1Id, template1Id],
-    status: 'In Progress',
+    status: 'In Progress', 
     type: 'Overleia', 
     updatedDate: outputUpdateDate,
     owner: 'def',
@@ -104,16 +104,16 @@ describe('my tests', async () => {
     const outputProm = await app.functions.createJob({outputId, ...out1, owner: out1.owner});
     return expect(JSON.stringify(outputProm)).toEqual(JSON.stringify({outputId, ...out1}));
   }, 9999999);
-  
-  // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, but then you try with different test inputs. See testFunction
 
-  /*
-
-  it('searching outputs', () => {
-    const outputs = app.function.listJobs(owner); 
-    return expect(outputs).resolves.toBe(false);
+  // list the jobs
+  it('searching outputs', async () => {
+    const listProm = await app.functions.listJobs(out1.owner); 
+    return expect(JSON.stringify(listProm)).toEqual(JSON.stringify({id: outputId, ...out1}));
   }, 9999999);
-  */
+
+  // TODO: rethink how tests are done. typically test suites are one of each and you do all the functions, 
+  // but then you try with different test inputs. See testFunction
+
   afterAll(async () => {
     // teardown db
     await DynamoDbLocal.stop(dynamoLocalPort);
