@@ -10,7 +10,7 @@ const buildNodeWebvttCues = (cues) => {
   return cues.map((cue) => {
     const out = cue;
     out.identifier = cue.identifier || '';
-    out.text = cue.text || '';
+    out.text = cue.text || '███ ███ ███';
     out.styles = cue.styles || '';
     return out;
   });
