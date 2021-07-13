@@ -1,13 +1,13 @@
-import fs from 'fs';
-import { mp3ToData } from '../../utils/Mp3ToJsonUtils';
-import {
+const fs = require('fs');
+const { mp3ToData } = require('../src/utils/Mp3ToJsonUtils');
+const {
   DEFAULT_META, DEFAULT_VALIDITY,
   INPUT_MP3_DIR, INPUT_MP3_FILENAME, INPUT_MP4_FILENAME, INPUT_MP4_PATH, TEST_MP3_PATH,
-} from '../../settings';
-import { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } from '../../utils/JsonToWebvttUtils';
-import expectedWebvtt from '../test-data/expectedWebvtt';
+} = require('../src/utils/constants');
+const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('../src/utils/JsonToWebvttUtils');
+const expectedWebvtt = require('../test-data/expectedWebvtt');
 
-import { memfsToMp3, mp4ToMemfs, removeFile } from '../../utils/Mp4ToMp3Utils';
+const { memfsToMp3, mp4ToMemfs, removeFile } = require('../src/utils/Mp4ToMp3Utils');
 
 describe('End to end media conversions', () => {
   it('should create an MP3 file from an MP4 file', async (done) => {

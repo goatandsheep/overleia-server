@@ -1,11 +1,11 @@
-import testBeats from '../test-data/testBeats.json';
-import {
+const testBeats = require('../test-data/testBeats.json');
+const {
   DEFAULT_META, DEFAULT_VALIDITY, EMPTY_CUES_ERROR, NULL_CUES_ERROR, NULL_META_ERROR, NULL_VALIDITY_ERROR,
-} from '../../settings';
-import { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } from '../../utils/JsonToWebvttUtils';
-import expectedAudioCues from '../test-data/expectedAudioCues';
-import expectedWebvtt from '../test-data/expectedWebvtt';
-import expectedNodeWebvttInput from '../test-data/expectedNodeWebvttInput';
+} = require('../src/utils/constants');
+const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('../src/utils/JsonToWebvttUtils');
+const expectedAudioCues = require('../test-data/expectedAudioCues');
+const expectedWebvtt = require('../test-data/expectedWebvtt');
+const expectedNodeWebvttInput = require('../test-data/expectedNodeWebvttInput');
 
 describe('JSON to WebVtt', () => {
   it('should create a JSON file of time segments from audio', async () => {
