@@ -34,12 +34,12 @@ describe('End to end media conversions', () => {
       expect(fileSize).toBe(expectedMp3FileSize);
       done();
     }
-  });
+  }, 99999);
 
   it('should create a webvtt file from an mp3 file', async () => {
     const testBeats = await mp3ToData(INPUT_MP3_DIR + INPUT_MP3_FILENAME, 0.3);
     const cues = buildNodeWebvttCues(testBeats);
     const input = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);
     expect(buildWebvtt(input).replace(/ /g, '')).toEqual(expectedWebvtt.replace(/ /g, ''));
-  });
+  }, 99999);
 });
