@@ -63,4 +63,8 @@ module.exports = {
   size: {
     type: Number,
   },
+  // seconds
+  time: {
+    type: Number,
+  },
 };

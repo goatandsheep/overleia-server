@@ -55,6 +55,18 @@ app.get('/jobs/:id', async (req, res) => {
   }
 });
 
+app.delete('/jobs/:id', async (req, res) => {
+  try {
+    const job = await OutputModel.get({ id: req.params.id });
+    // TODO: await proc.storageDelete(job.file, `private/${req.user.identityId}/`);
+    // TODO: delete OutputModel
+    res.status(200).jsonp(job);
+  } catch (err) {
+    console.error('delete/jobs/id', err);
+    res.status(500).send('Bad Request Delete job');
+  }
+});
+
 // ABSTRACTION: createJob
 const createJob = async function createJob(job) {
   return OutputModel.create(job);
@@ -240,6 +252,18 @@ app.get('/file/:id', async (req, res) => {
   }
 });
 
+app.delete('/file/:id', async (req, res) => {
+  try {
+    const file = await InputModel.get({ id: req.params.id });
+    // TODO: await proc.storageDelete(file.file, `private/${req.user.identityId}/`);
+    // TODO: delete InputModel
+    res.status(200).jsonp(file);
+  } catch (err) {
+    console.error('delete/file/id', err);
+    res.status(500).send('Bad Request Delete job');
+  }
+});
+
 // ABSTRACTION: create input
 const createInput = async function createInput(file, id, owner, status = 'In Progress') {
   return InputModel.create({
@@ -262,6 +286,7 @@ app.post('/file', async (req, res) => {
       status: 'In Progress',
       size,
     });
+    // TODO: update Stripe storage usage
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);
