@@ -16,7 +16,7 @@ const { mp4ToMemfs, memfsToMp3 } = require('./Mp4ToMp3Utils');
 const { mp3ToData } = require('./Mp3ToJsonUtils');
 const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./JsonToWebvttUtils');
 
-const { OutputModel } = require('../models');
+const { OutputModel, InputModel } = require('../models');
 
 const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
@@ -123,7 +123,7 @@ const beatcaps = async function beatcaps(input, subfolder, job) {
     const outputPath = path.join(__dirname, '..', '..', 'data', (outputFile));
     if (!input.size || input.size > 0) {
       const inputSize = await sizeOf(input.file, subfolder);
-      // TODO: save inputSize in InputModel object
+      input.size = inputSize;
       // TODO: update Stripe storage usage
     }
 
