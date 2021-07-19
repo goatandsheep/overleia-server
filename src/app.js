@@ -255,8 +255,8 @@ app.get('/file/:id', async (req, res) => {
 app.delete('/file/:id', async (req, res) => {
   try {
     const file = await InputModel.get({ id: req.params.id });
-    // TODO: await proc.storageDelete(file.file, `private/${req.user.identityId}/`);
-    // TODO: delete InputModel
+    await proc.storageDelete(file.file, `private/${req.user.identityId}/`);
+    InputModel.delete();
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('delete/file/id', err);
@@ -279,6 +279,7 @@ app.post('/file', async (req, res) => {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
     const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
+    const time = await mediaLength.mediaLength();
     const file = await InputModel.create({
       file: req.body.file,
       id,
