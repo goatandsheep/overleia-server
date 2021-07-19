@@ -22,8 +22,16 @@ const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
 
 const storageDelete = async function storageDelete(filename, folder) {
+  const params = {
+    Bucket: fileBucket,
+    Key: folder + filename
+  };
   try {
-    // TODO: Delete file from S3
+    s3.deleteObject(params, function(err, data) {
+      if (err) {
+        console.log(err, err.stack);
+      }    
+    });
     // TODO: update Stripe storage usage
   } catch (err) {
     console.error(`Error deleting file from S3: ${err}`);
@@ -61,7 +69,7 @@ const storageEstimate = async function storageEstimate(time, resolution) {
   */
   const compressionRatio = 0.65;
   return time * resolution * compressionRatio;
-}
+};
 
 // download
 const fileFetch = async function fileFetch(filename, folder) {
