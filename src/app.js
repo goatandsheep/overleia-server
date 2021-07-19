@@ -58,8 +58,8 @@ app.get('/jobs/:id', async (req, res) => {
 app.delete('/jobs/:id', async (req, res) => {
   try {
     const job = await OutputModel.get({ id: req.params.id });
-    // TODO: await proc.storageDelete(job.file, `private/${req.user.identityId}/`);
-    // TODO: delete OutputModel
+    await proc.storageDelete(job.file, `private/${req.user.identityId}/`);
+    OutputModel.delete();
     res.status(200).jsonp(job);
   } catch (err) {
     console.error('delete/jobs/id', err);

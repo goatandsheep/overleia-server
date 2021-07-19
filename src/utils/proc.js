@@ -24,13 +24,13 @@ const fileBucket = process.env.S3_FILE_BUCKET;
 const storageDelete = async function storageDelete(filename, folder) {
   const params = {
     Bucket: fileBucket,
-    Key: folder + filename
+    Key: folder + filename,
   };
   try {
-    s3.deleteObject(params, function(err, data) {
+    s3.deleteObject(params, (err, data) => {
       if (err) {
         console.log(err, err.stack);
-      }    
+      }
     });
     // TODO: update Stripe storage usage
   } catch (err) {
