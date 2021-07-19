@@ -2,6 +2,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 require('dotenv-flow').config();
+const mediaLength = require('./utils/mediaLength');
 
 const app = express();
 
@@ -279,13 +280,14 @@ app.post('/file', async (req, res) => {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
     const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
-    const time = await mediaLength.mediaLength();
+    const time = await mediaLength.mediaLength(req.body.file); // is this the file path?
     const file = await InputModel.create({
       file: req.body.file,
       id,
       owner: req.user.identityId,
       status: 'In Progress',
       size,
+      time,
     });
     // TODO: update Stripe storage usage
     res.status(200).jsonp(file);
