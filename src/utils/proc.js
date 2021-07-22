@@ -2,6 +2,8 @@ const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const path = require('path');
 const pip = require('overleia');
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+const ffmpeg = require('fluent-ffmpeg');
 const {
   DEFAULT_META,
   DEFAULT_VALIDITY,
@@ -15,8 +17,9 @@ const {
 const { mp4ToMemfs, memfsToMp3 } = require('./Mp4ToMp3Utils');
 const { mp3ToData } = require('./Mp3ToJsonUtils');
 const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./JsonToWebvttUtils');
-
 const { OutputModel, InputModel } = require('../models');
+
+ffmpeg.setFfprobePath(ffprobePath);
 
 const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
@@ -251,7 +254,25 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
   }
 };
 
+// TODO: fix
+const mediaLength = async (filename, folder) => {
+  // TODO: fetch
+  const fileBin = await fileFetch(filename, folder);
+  const prom = new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(filename, (err, metadata) => {
+      if (err) {
+        console.error('error');
+        reject(err);
+      } else {
+        resolve(metadata.format.duration);
+      }
+    });
+  });
+  return prom;
+};
+
 module.exports = {
+  mediaLength,
   overleia,
   beatcaps,
   sizeOf,

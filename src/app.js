@@ -280,7 +280,7 @@ app.post('/file', async (req, res) => {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
     const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
-    const time = await mediaLength.mediaLength(req.body.file); // is this the file path?
+    const time = await proc.mediaLength(req.body.file, `private/${req.user.identityId}/`); // is this the file path?
     const file = await InputModel.create({
       file: req.body.file,
       id,
