@@ -116,6 +116,7 @@ const beatcaps = async function beatcaps(input, subfolder, job) {
       id: job.id,
     }, {
       status: 'Complete',
+      name: inputName,
       type: 'BeatCaps',
       updatedDate: new Date(),
       size: input.size,
