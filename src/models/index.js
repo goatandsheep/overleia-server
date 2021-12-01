@@ -2,15 +2,17 @@ const dynamoose = require('dynamoose');
 
 const region = process.env.AWS_REGION || 'us-east-1';
 
-dynamoose.aws.sdk.config.update({
-  region,
-});
-
 if (process.env.LOCAL_DYNAMODB !== 'false') {
+  dynamoose.aws.sdk.config.update({
+    region: 'localhost',
+  });
   dynamoose.aws.ddb.local();
   dynamoose.logger.providers.set(console);
   console.log('Connected to DynamoDB localhost');
 } else {
+  dynamoose.aws.sdk.config.update({
+    region,
+  });
   console.log('Updated Dynamo Config');
 }
 
