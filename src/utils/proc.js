@@ -7,17 +7,20 @@ const ffmpeg = require('fluent-ffmpeg');
 const {
   DEFAULT_META,
   DEFAULT_VALIDITY,
-  INPUT_DIRECTORY,
-  INPUT_MP3_DIR,
-  NPUT_MP3_FILENAME,
-  INPUT_MP4_FILENAME,
-  INPUT_MP4_PATH,
-  TEST_MP3_PATH,
+  // INPUT_DIRECTORY,
+  // INPUT_MP3_DIR,
+  // NPUT_MP3_FILENAME,
+  // INPUT_MP4_FILENAME,
+  // INPUT_MP4_PATH,
+  // TEST_MP3_PATH,
 } = require('./constants');
 const { mp4ToMemfs, memfsToMp3 } = require('./Mp4ToMp3Utils');
 const { mp3ToData } = require('./Mp3ToJsonUtils');
 const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./JsonToWebvttUtils');
-const { OutputModel, InputModel } = require('../models');
+const {
+  OutputModel,
+  // InputModel
+} = require('../models');
 
 ffmpeg.setFfprobePath(ffprobePath);
 
@@ -33,6 +36,7 @@ const storageDelete = async function storageDelete(filename, folder) {
     s3.deleteObject(params, (err, data) => {
       if (err) {
         console.log(err, err.stack);
+        console.log(data);
       }
     });
     // TODO: update Stripe storage usage
@@ -132,13 +136,13 @@ const beatcaps = async function beatcaps(input, subfolder, job) {
     const inputName = inputNameSegs.join('.');
     const outputFile = `${inputName}.vtt`;
     const outputPath = path.join(__dirname, '..', '..', 'data', (outputFile));
+
+    const s3FolderPath = `private/${subfolder}/`;
     if (!input.size || input.size > 0) {
-      const inputSize = await sizeOf(input.file, subfolder);
+      const inputSize = await sizeOf(input.file, s3FolderPath);
       input.size = inputSize;
       // TODO: update Stripe storage usage
     }
-
-    const s3FolderPath = `private/${subfolder}/`;
 
     let fileData;
     let inputVideo = true;
@@ -257,9 +261,10 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
 // TODO: fix
 const mediaLength = async (filename, folder) => {
   // TODO: fetch
-  const fileBin = await fileFetch(filename, folder);
+  await fileFetch(filename, folder);
   const prom = new Promise((resolve, reject) => {
-    ffmpeg.ffprobe(filename, (err, metadata) => {
+    const probeFilePath = path.join(__dirname, '..', '..', 'data', filename);
+    ffmpeg.ffprobe(probeFilePath, (err, metadata) => {
       if (err) {
         console.error('error');
         reject(err);
@@ -276,5 +281,6 @@ module.exports = {
   overleia,
   beatcaps,
   sizeOf,
+  storageEstimate,
   storageDelete,
 };

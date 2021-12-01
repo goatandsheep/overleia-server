@@ -2,7 +2,6 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 require('dotenv-flow').config();
-const mediaLength = require('./utils/mediaLength');
 
 const app = express();
 
@@ -11,13 +10,6 @@ const {
   OutputModel,
   TemplateModel,
 } = require('./models');
-
-/**
- * Checks user groups
- */
-function verifyToken() {
-  return true;
-}
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -89,7 +81,7 @@ app.post('/jobs', async (req, res) => {
     await saveJob(job);
 
     const inputs = await Promise.all(req.body.inputs.map(
-      async (inputId) => (await InputModel.get({ id: inputId })),
+      async (inputId) => (InputModel.get({ id: inputId })),
     ));
     if (typeof proc !== 'undefined' && job.type === 'Overleia') {
       const template = await TemplateModel.get({ id: req.body.templateId });
