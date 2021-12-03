@@ -142,7 +142,7 @@ const saveTemplate = async function saveTemplate(template) {
 app.post('/templates/new', async (req, res) => {
   const id = uuidv4();
   try {
-    const template = await createTemplate(id, ...req.body);
+    const template = await createTemplate(id, { ...req.body });
     await saveTemplate(template);
     res.status(200).jsonp(template);
   } catch (err) {
