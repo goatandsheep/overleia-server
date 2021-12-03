@@ -9,6 +9,7 @@
     "lambda": "node index.js",
     "test": "jest",
     "pack": "npm-pack-all-zip --dist=dist",
+    "build": "webpack",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix"
   },
@@ -37,7 +38,10 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "jest": "^26.6.3",
-    "npm-pack-all-zip": "^0.2.0"
+    "npm-pack-all-zip": "^0.2.0",
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1",
+    "zip-webpack-plugin": "^4.0.1"
   },
   "eslint": {
     "extends": "eslint:recommended"
