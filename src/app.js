@@ -11,6 +11,15 @@ const {
   TemplateModel,
 } = require('./models');
 
+const billing = require('./utils/billing');
+
+/**
+ * Checks user groups
+ */
+function verifyToken() {
+  return true;
+}
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -254,6 +263,34 @@ app.delete('/file/:id', async (req, res) => {
   } catch (err) {
     console.error('delete/file/id', err);
     res.status(500).send('Bad Request Delete job');
+  }
+});
+app.get('/billing/usage', async (req, res) => {
+  try {
+    billing.getUsage(req.user);
+  } catch (err) {
+    console.error('/get/billing/usage', err);
+    res.status(500).send('Bad Request');
+  }
+});
+app.post('/billing/usage', async (req, res) => {
+  try {
+    if (req.body.type === 'BeatCaps') {
+      billing.recordUsage(req.user, req.body.usage, req.body.type);
+    } else {
+      billing.setUsage(req.user, req.body.usage, req.body.type);
+    }
+  } catch (err) {
+    console.error('/post/billing/usage', err);
+    res.status(500).send('Bad Request');
+  }
+});
+app.get('/billing/link', async (req, res) => {
+  try {
+    billing.getBillingLink(req.user.identityId);
+  } catch (err) {
+    console.error('/get/billing/link', err);
+    res.status(500).send('Bad Request');
   }
 });
 

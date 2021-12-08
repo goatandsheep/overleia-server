@@ -29,6 +29,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "node-webvtt": "^1.9.1",
     "overleia": "^3.2.1",
+    "stripe": "^8.191.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
