@@ -265,31 +265,51 @@ app.delete('/file/:id', async (req, res) => {
     res.status(500).send('Bad Request Delete job');
   }
 });
-app.get('/billing/usage', async (req, res) => {
+app.get('/usage', async (req, res) => {
   try {
-    billing.getUsage(req.user);
+    const usage = await billing.getUsage(req.user, req.type);
+    res.status(200).jsonp({ type: 'BeatCaps', usage });
   } catch (err) {
-    console.error('/get/billing/usage', err);
+    console.error('/get/usage', err);
     res.status(500).send('Bad Request');
   }
 });
-app.post('/billing/usage', async (req, res) => {
+
+// TODO: estimation
+app.post('/usage', async (req, res) => {
   try {
     if (req.body.type === 'BeatCaps') {
-      billing.recordUsage(req.user, req.body.usage, req.body.type);
+      // const usage = billing.recordUsage(req.user, req.body.usage, req.body.type);
+      const estimate = '0';
+      res.status(200).jsonp({ type: 'BeatCaps', estimate });
     } else {
-      billing.setUsage(req.user, req.body.usage, req.body.type);
+      // const usage = billing.setUsage(req.user, req.body.usage, req.body.type);
+      const estimate = '0';
+      res.status(200).jsonp({ type: 'Overleia', estimate });
     }
   } catch (err) {
-    console.error('/post/billing/usage', err);
+    console.error('/post/usage', err);
     res.status(500).send('Bad Request');
   }
 });
-app.get('/billing/link', async (req, res) => {
+
+app.put('/usage', async (req, res) => {
   try {
-    billing.getBillingLink(req.user.identityId);
+    const registrationLink = await billing.getBillingLink(req.user);
+    res.status(200).jsonp({ url: registrationLink });
   } catch (err) {
-    console.error('/get/billing/link', err);
+    console.error('/put/usage', err);
+    res.status(500).send('Bad Request');
+  }
+});
+
+// verify
+app.patch('/usage', async (req, res) => {
+  try {
+    await billing.verifyBilling(req.body.session_id);
+    res.status(200).send('Success');
+  } catch (err) {
+    console.error('/patch/usage', err);
     res.status(500).send('Bad Request');
   }
 });

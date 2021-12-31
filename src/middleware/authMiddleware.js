@@ -1,4 +1,7 @@
+const AWS = require('aws-sdk');
 const CognitoExpress = require('cognito-express');
+
+const cognitoIdentityInstance = new AWS.CognitoIdentityServiceProvider();
 
 const cognito = new CognitoExpress({
   region: process.env.AWS_REGION,
@@ -30,10 +33,22 @@ const authenticate = function authenticate(req, res, next) {
           ErrorCode: '0004',
         });
     }
-
-    req.user = response;
-    req.user.identityId = identityId;
-    next();
+    cognitoIdentityInstance.getUser({ AccessToken: accessTokenFromClient }).promise()
+      .then((dets) => {
+        const attributes = {};
+        dets.UserAttributes.forEach((val) => {
+          attributes[val.Name] = val.Value;
+        });
+        Object.assign(response, { attributes });
+      })
+      .catch((userErr) => {
+        console.error('user details fail:', userErr);
+      })
+      .finally(() => {
+        req.user = response;
+        req.user.identityId = identityId;
+        next();
+      });
   }
   cognito.validate(accessTokenFromClient, validateTokenCallback);
 };
