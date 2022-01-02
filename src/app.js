@@ -306,7 +306,7 @@ app.put('/usage', async (req, res) => {
 // verify
 app.patch('/usage', async (req, res) => {
   try {
-    await billing.verifyBilling(req.body.session_id);
+    await billing.verifyBilling(req.user, req.body.session_id);
     res.status(200).send('Success');
   } catch (err) {
     console.error('/patch/usage', err);

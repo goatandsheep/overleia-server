@@ -47,6 +47,7 @@ const authenticate = function authenticate(req, res, next) {
       .finally(() => {
         req.user = response;
         req.user.identityId = identityId;
+        req.user.AccessToken = accessTokenFromClient;
         next();
       });
   }
