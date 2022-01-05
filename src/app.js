@@ -306,8 +306,9 @@ app.put('/usage', async (req, res) => {
 // verify
 app.patch('/usage', async (req, res) => {
   try {
-    await billing.verifyBilling(req.user, req.body.session_id);
-    res.status(200).send('Success');
+    const usageInfo = await billing.verifyBilling(req.user, req.body.session_id);
+    // res.status(200).send('Success');
+    res.status(200).jsonp(usageInfo);
     // TODO: get usage data { verified: true, beatcaps: 1231, overleia: 12312 }
   } catch (err) {
     console.error('/patch/usage', err);

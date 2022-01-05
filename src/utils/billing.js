@@ -207,6 +207,7 @@ const verifyBilling = async (user, sessionId) => {
       Username: user.username,
       UserPoolId: process.env.COGNITO_POOL_ID,
     }).promise();
+    return await getUsage(user);
   } catch (err) {
     console.error('verifyBilling', err);
     throw err;

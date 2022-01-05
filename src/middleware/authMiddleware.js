@@ -33,7 +33,12 @@ const authenticate = function authenticate(req, res, next) {
           ErrorCode: '0004',
         });
     }
-    cognitoIdentityInstance.getUser({ AccessToken: accessTokenFromClient }).promise()
+
+    // cognitoIdentityInstance.getUser({ AccessToken: accessTokenFromClient }).promise()
+    cognitoIdentityInstance.adminGetUser({
+      UserPoolId: process.env.COGNITO_POOL_ID,
+      Username: response.username,
+    }).promise()
       .then((dets) => {
         const attributes = {};
         dets.UserAttributes.forEach((val) => {
