@@ -267,11 +267,11 @@ app.delete('/file/:id', async (req, res) => {
 });
 app.get('/usage', async (req, res) => {
   try {
-    const usage = await billing.getUsage(req.user, req.type);
-    res.status(200).jsonp({ type: 'BeatCaps', usage });
+    const usage = await billing.getUsage(req.user);
+    res.status(200).jsonp({ type: req.type, usage });
   } catch (err) {
     console.error('/get/usage', err);
-    res.status(500).send('Bad Request');
+    res.status(500).send('Bad Request get stripe signup link');
   }
 });
 
@@ -279,12 +279,12 @@ app.get('/usage', async (req, res) => {
 app.post('/usage', async (req, res) => {
   try {
     if (req.body.type === 'BeatCaps') {
-      // const usage = billing.recordUsage(req.user, req.body.usage, req.body.type);
-      const estimate = '0';
+      const estimate = billing.recordUsage(req.user, req.body.usage);
+      // const estimate = '0';
       res.status(200).jsonp({ type: 'BeatCaps', estimate });
     } else {
-      // const usage = billing.setUsage(req.user, req.body.usage, req.body.type);
-      const estimate = '0';
+      const estimate = billing.setUsage(req.user, req.body.usage);
+      // const estimate = '0';
       res.status(200).jsonp({ type: 'Overleia', estimate });
     }
   } catch (err) {
@@ -308,6 +308,7 @@ app.patch('/usage', async (req, res) => {
   try {
     await billing.verifyBilling(req.user, req.body.session_id);
     res.status(200).send('Success');
+    // TODO: get usage data { verified: true, beatcaps: 1231, overleia: 12312 }
   } catch (err) {
     console.error('/patch/usage', err);
     res.status(500).send('Bad Request');

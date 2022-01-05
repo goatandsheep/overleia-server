@@ -6,6 +6,11 @@ const stripe = Stripe(process.env.STRIPE_SEC_KEY);
 
 const cognitoIdentityInstance = new AWS.CognitoIdentityServiceProvider();
 
+const customerAttrName = process.env.STRIPE_DEV_MODE !== 'true' ? 'custom:stripeId' : 'custom:stripeIdTest';
+const storageAttrName = process.env.STRIPE_DEV_MODE !== 'true' ? 'custom:storageSubId' : 'custom:storageSubIdTest';
+const beatcapsAttrName = process.env.STRIPE_DEV_MODE !== 'true' ? 'custom:beatcapsSubId' : 'custom:beatcapsSubIdTest';
+const storageUsageAttr = process.env.STRIPE_DEV_MODE !== 'true' ? 'custom:storageUsage' : 'custom:storageUsageTest';
+const beatcapsUsageAttr = process.env.STRIPE_DEV_MODE !== 'true' ? 'custom:beatcapsUsage' : 'custom:beatcapsUsageTest';
 // const createSession = () => {};
 
 /**
@@ -13,10 +18,11 @@ const cognitoIdentityInstance = new AWS.CognitoIdentityServiceProvider();
  */
 const getCustomer = async (user) => {
   // if cognito has customer ID, return that
-  let customerId = user['custom:stripeId'];
+  let customerId = user[customerAttrName];
 
   // if cognito doesn't have customer ID create customer ID
   if (!customerId) {
+    console.log('no customer id');
     // create customer through Stripe API
     const customer = await stripe.customers.create({
       email: user.attributes.email,
@@ -24,39 +30,71 @@ const getCustomer = async (user) => {
     });
 
     customerId = customer.id;
-    cognitoIdentityInstance.updateUserAttributes({
+    cognitoIdentityInstance.adminUpdateUserAttributes({
       UserAttributes: [{
-        Name: 'custom:stripeId',
+        Name: customerAttrName,
         Value: customerId,
       }],
-      AccessToken: user.AccessToken,
+      Username: user.username,
+      UserPoolId: process.env.COGNITO_POOL_ID,
     }).promise();
   }
   return customerId;
 };
 
-const getUsage = async (user, type) => {
-  let subscriptionId;
-  if (type === 'BeatCaps') {
-    subscriptionId = user['custom:beatcapsSubId'];
-  } else {
-    subscriptionId = user['custom:storageSubId'];
+/**
+ * Gets service usage
+ */
+const getUsage = async (user) => {
+  // TODO: if Beatcaps is enabled
+  let verified = true;
+  // const beatcapsSubscriptionId = user[beatcapsAttrName];
+  const storageSubscriptionId = user[storageAttrName];
+  if (!storageSubscriptionId) {
+    // throw new Error('No keys');
+    verified = false;
   }
 
-  const usageRecordSummaries = await stripe.subscriptionItems.listUsageRecordSummaries(
-    subscriptionId,
-    { limit: 1 },
-  );
-  return usageRecordSummaries.data[0].total_usage;
+  // let beatcapsUsage;
+  // if (beatcapsSubscriptionId) {
+  //   beatcapsUsage = await stripe.subscriptionItems.listUsageRecordSummaries(
+  //     beatcapsSubscriptionId,
+  //     { limit: 1 },
+  //   );
+  // }
+  // beatcapsUsage.data[0].total_usage
+
+  // const usageRecordSummaries = await stripe.subscriptionItems.listUsageRecordSummaries(
+  //   storageSubscriptionId,
+  //   { limit: 1 },
+  // );
+  // usageRecordSummaries.data[0].total_usage
+
+  return {
+    beatcapsUsage: user[beatcapsUsageAttr],
+    storageUsage: user[storageUsageAttr],
+    verified,
+  };
 };
 
 // beatcaps / metered stuff
-const recordUsage = async (user, usage, type) => {
-  let subscriptionId;
-  if (type === 'BeatCaps') {
-    subscriptionId = user['custom:beatcapsSubId'];
-  } else {
-    subscriptionId = user['custom:storageSubId'];
+const recordUsage = async (user, usage) => {
+  const subscriptionId = user[beatcapsAttrName];
+
+  let currentUsage = user[beatcapsUsageAttr];
+  currentUsage += usage;
+
+  await cognitoIdentityInstance.adminUpdateUserAttributes({
+    UserAttributes: [{
+      Name: beatcapsUsageAttr,
+      Value: currentUsage,
+    }],
+    Username: user.username,
+    UserPoolId: process.env.COGNITO_POOL_ID,
+  }).promise();
+
+  if (!subscriptionId) {
+    return currentUsage;
   }
 
   const timestamp = new Date().getTime();
@@ -67,13 +105,22 @@ const recordUsage = async (user, usage, type) => {
 };
 
 // storage
-const setUsage = async (user, usage, type) => {
-  let subscriptionId;
-  if (type === 'BeatCaps') {
-    subscriptionId = user['custom:beatcapsSubId'];
-  } else {
-    subscriptionId = user['custom:storageSubId'];
+const setUsage = async (user, usage) => {
+  const subscriptionId = user[storageAttrName];
+
+  await cognitoIdentityInstance.adminUpdateUserAttributes({
+    UserAttributes: [{
+      Name: storageUsageAttr,
+      Value: usage,
+    }],
+    Username: user.username,
+    UserPoolId: process.env.COGNITO_POOL_ID,
+  }).promise();
+
+  if (!subscriptionId) {
+    return usage;
   }
+
   const timestamp = new Date().getTime();
   return stripe.subscriptionItems.createUsageRecord(
     subscriptionId,
@@ -134,27 +181,31 @@ const verifyBilling = async (user, sessionId) => {
       ],
     });
 
-    // cognitoIdentityInstance.updateUserAttributes({
+    // cognitoIdentityInstance.adminUpdateUserAttributes({
     //   UserAttributes: [{
-    //     Name: 'custom:stripeId',
+    //     Name: customerAttrName,
     //     Value: session.customer,
     //   }],
-    // AccessToken: user.AccessToken,
+    // Username: user.username,
+    // UserPoolId: process.env.COGNITO_POOL_ID,
     // }).promise();
-    cognitoIdentityInstance.updateUserAttributes({
+    // TODO: combine next two fetches if beatcaps is active
+    cognitoIdentityInstance.adminUpdateUserAttributes({
       UserAttributes: [{
-        Name: 'custom:beatcapsSubId',
+        Name: beatcapsAttrName,
         Value: beatcapsSubscription.id,
       }],
-      AccessToken: user.AccessToken,
+      Username: user.username,
+      UserPoolId: process.env.COGNITO_POOL_ID,
     }).promise();
 
-    cognitoIdentityInstance.updateUserAttributes({
+    cognitoIdentityInstance.adminUpdateUserAttributes({
       UserAttributes: [{
-        Name: 'custom:storageSubId',
+        Name: storageAttrName,
         Value: storageSubscription.id,
       }],
-      AccessToken: user.AccessToken,
+      Username: user.username,
+      UserPoolId: process.env.COGNITO_POOL_ID,
     }).promise();
   } catch (err) {
     console.error('verifyBilling', err);
