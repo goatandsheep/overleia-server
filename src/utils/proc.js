@@ -104,7 +104,7 @@ const beatcaps = async function beatcaps(input, subfolder, job) {
     }
 
     // 2) use the mp3tojson module
-    const beats = await mp3ToData(mp3InPath, 0.3);
+    const beats = await mp3ToData(mp3InPath, 0.1, 0.05);
     // 3) use the jsontowebvtt module
     const cues = buildNodeWebvttCues(beats);
     const vttInput = buildNodeWebvttInput(DEFAULT_META, cues, DEFAULT_VALIDITY);

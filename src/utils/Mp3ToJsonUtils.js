@@ -2,7 +2,7 @@
 // Not currently implemented
 const getTimeSegments = require('beatcaps-library');
 
-const mp3ToData = (fileName, interval) => getTimeSegments(fileName, interval);
+const mp3ToData = (fileName, interval, advance = 0) => getTimeSegments(fileName, interval, advance);
 
 module.exports = {
   mp3ToData,
