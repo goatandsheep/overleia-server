@@ -1,4 +1,7 @@
+const AWS = require('aws-sdk');
 const CognitoExpress = require('cognito-express');
+
+const cognitoIdentityInstance = new AWS.CognitoIdentityServiceProvider();
 
 const cognito = new CognitoExpress({
   region: process.env.AWS_REGION,
@@ -31,9 +34,27 @@ const authenticate = function authenticate(req, res, next) {
         });
     }
 
-    req.user = response;
-    req.user.identityId = identityId;
-    next();
+    // cognitoIdentityInstance.getUser({ AccessToken: accessTokenFromClient }).promise()
+    cognitoIdentityInstance.adminGetUser({
+      UserPoolId: process.env.COGNITO_POOL_ID,
+      Username: response.username,
+    }).promise()
+      .then((dets) => {
+        const attributes = {};
+        dets.UserAttributes.forEach((val) => {
+          attributes[val.Name] = val.Value;
+        });
+        Object.assign(response, { attributes });
+      })
+      .catch((userErr) => {
+        console.error('user details fail:', userErr);
+      })
+      .finally(() => {
+        req.user = response;
+        req.user.identityId = identityId;
+        req.user.AccessToken = accessTokenFromClient;
+        next();
+      });
   }
   cognito.validate(accessTokenFromClient, validateTokenCallback);
 };

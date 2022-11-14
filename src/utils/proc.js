@@ -2,24 +2,48 @@ const fs = require('fs').promises;
 const AWS = require('aws-sdk');
 const path = require('path');
 const pip = require('overleia');
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+const ffmpeg = require('fluent-ffmpeg');
 const {
   DEFAULT_META,
   DEFAULT_VALIDITY,
-  INPUT_DIRECTORY,
-  INPUT_MP3_DIR,
-  NPUT_MP3_FILENAME,
-  INPUT_MP4_FILENAME,
-  INPUT_MP4_PATH,
-  TEST_MP3_PATH,
+  // INPUT_DIRECTORY,
+  // INPUT_MP3_DIR,
+  // NPUT_MP3_FILENAME,
+  // INPUT_MP4_FILENAME,
+  // INPUT_MP4_PATH,
+  // TEST_MP3_PATH,
 } = require('./constants');
 const { mp4ToMemfs, memfsToMp3 } = require('./Mp4ToMp3Utils');
 const { mp3ToData } = require('./Mp3ToJsonUtils');
 const { buildNodeWebvttCues, buildNodeWebvttInput, buildWebvtt } = require('./JsonToWebvttUtils');
+const {
+  OutputModel,
+  // InputModel
+} = require('../models');
 
-const { OutputModel } = require('../models');
+ffmpeg.setFfprobePath(ffprobePath);
 
 const s3 = new AWS.S3();
 const fileBucket = process.env.S3_FILE_BUCKET;
+
+const storageDelete = async function storageDelete(filename, folder) {
+  const params = {
+    Bucket: fileBucket,
+    Key: folder + filename,
+  };
+  try {
+    s3.deleteObject(params, (err, data) => {
+      if (err) {
+        console.log(err, err.stack);
+        console.log(data);
+      }
+    });
+    // TODO: update Stripe storage usage
+  } catch (err) {
+    console.error(`Error deleting file from S3: ${err}`);
+  }
+};
 
 const fileDelete = async function fileDelete(filename) {
   try {
@@ -30,6 +54,28 @@ const fileDelete = async function fileDelete(filename) {
     console.error('file delete error', err);
     throw err;
   }
+};
+
+/**
+ * @param {Number} time seconds - does this need to be estimated too?
+ * @param {Number} resolution height * width of output
+ */
+const storageEstimate = async function storageEstimate(time, resolution) {
+  /*
+  const totalDurationCalculate = async function (inputs, metadata) {
+    if (inputs.length !== metadata.length) {
+      throw new Error('mismatched template and input lengths');
+    }
+
+    const lengthProms = inputs.map((entry, i) => {
+      return (entry.delay || 0) + metadata[i].duration;
+    });
+    const lengths = await Promise.all(lengthProms);
+    return Math.max(...lengths, 1);
+  };
+  */
+  const compressionRatio = 0.65;
+  return time * resolution * compressionRatio;
 };
 
 // download
@@ -56,17 +102,6 @@ const fileFetch = async function fileFetch(filename, folder) {
   }
 };
 
-// upload
-const filePut = async function filePut(filename, folder, localFilePath) {
-  const data = Buffer.from(await fs.readFile(localFilePath), 'binary');
-  const params = {
-    Body: data,
-    Bucket: fileBucket,
-    Key: folder + filename,
-  };
-  return s3.putObject(params).promise();
-};
-
 /**
  * get file size
  */
@@ -76,7 +111,22 @@ const sizeOf = async function sizeOf(filename, folder) {
     Bucket: fileBucket,
   };
   const head = await s3.headObject(params).promise();
+  // TODO: update Stripe storage usage
   return head.ContentLength;
+};
+
+// upload
+const filePut = async function filePut(filename, folder, localFilePath) {
+  const data = Buffer.from(await fs.readFile(localFilePath), 'binary');
+  const params = {
+    Body: data,
+    Bucket: fileBucket,
+    Key: folder + filename,
+  };
+  await s3.putObject(params).promise();
+  // TODO: does this work?
+  const fileSize = await sizeOf(filename, folder);
+  return fileSize;
 };
 
 const beatcaps = async function beatcaps(input, subfolder, job) {
@@ -88,6 +138,11 @@ const beatcaps = async function beatcaps(input, subfolder, job) {
     const outputPath = path.join(__dirname, '..', '..', 'data', (outputFile));
 
     const s3FolderPath = `private/${subfolder}/`;
+    if (!input.size || input.size > 0) {
+      const inputSize = await sizeOf(input.file, s3FolderPath);
+      input.size = inputSize;
+      // TODO: update Stripe storage usage
+    }
 
     let fileData;
     let inputVideo = true;
@@ -175,8 +230,9 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
       throw new Error('processing error');
     }
     const jobPath = `${job.name}.mp4`;
-    await filePut(jobPath, s3FolderPath, outputPath);
-    const size = await sizeOf(`${job.name}.mp4`, `private/${subfolder}/`);
+    const size = await filePut(jobPath, s3FolderPath, outputPath);
+    // const size = await sizeOf(`${job.name}.mp4`, `private/${subfolder}/`);
+    // TODO: update Stripe storage usage
     await OutputModel.update({
       id: job.id,
     }, {
@@ -203,8 +259,29 @@ const overleia = async function overleia(inputs, template, subfolder, job) {
   }
 };
 
+// TODO: fix
+const mediaLength = async (filename, folder) => {
+  // TODO: fetch
+  await fileFetch(filename, folder);
+  const prom = new Promise((resolve, reject) => {
+    const probeFilePath = path.join(__dirname, '..', '..', 'data', filename);
+    ffmpeg.ffprobe(probeFilePath, (err, metadata) => {
+      if (err) {
+        console.error('error');
+        reject(err);
+      } else {
+        resolve(metadata.format.duration);
+      }
+    });
+  });
+  return prom;
+};
+
 module.exports = {
+  mediaLength,
   overleia,
   beatcaps,
   sizeOf,
+  storageEstimate,
+  storageDelete,
 };

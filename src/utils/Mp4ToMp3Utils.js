@@ -1,6 +1,6 @@
 const ffmpeg = require('ffmpeg.js/ffmpeg-mp4');
 const fs = require('fs').promises;
-const { INPUT_DIRECTORY } = require('./constants');
+// const { INPUT_DIRECTORY } = require('./constants');
 
 const mp4ToMemfs = (data, mp4FileName = 'in.mp4', mp3FileName = 'out.mp3') => {
   try {

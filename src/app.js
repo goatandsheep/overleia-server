@@ -11,6 +11,8 @@ const {
   TemplateModel,
 } = require('./models');
 
+const billing = require('./utils/billing');
+
 /**
  * Checks user groups
  */
@@ -55,6 +57,18 @@ app.get('/jobs/:id', async (req, res) => {
   }
 });
 
+app.delete('/jobs/:id', async (req, res) => {
+  try {
+    const job = await OutputModel.get({ id: req.params.id });
+    await proc.storageDelete(job.file, `private/${req.user.identityId}/`);
+    OutputModel.delete();
+    res.status(200).jsonp(job);
+  } catch (err) {
+    console.error('delete/jobs/id', err);
+    res.status(500).send('Bad Request Delete job');
+  }
+});
+
 // ABSTRACTION: createJob
 const createJob = async function createJob(job) {
   return OutputModel.create(job);
@@ -76,7 +90,7 @@ app.post('/jobs', async (req, res) => {
     await saveJob(job);
 
     const inputs = await Promise.all(req.body.inputs.map(
-      async (inputId) => (await InputModel.get({ id: inputId })),
+      async (inputId) => (InputModel.get({ id: inputId })),
     ));
     if (typeof proc !== 'undefined' && job.type === 'Overleia') {
       const template = await TemplateModel.get({ id: req.body.templateId });
@@ -240,6 +254,68 @@ app.get('/file/:id', async (req, res) => {
   }
 });
 
+app.delete('/file/:id', async (req, res) => {
+  try {
+    const file = await InputModel.get({ id: req.params.id });
+    await proc.storageDelete(file.file, `private/${req.user.identityId}/`);
+    InputModel.delete();
+    res.status(200).jsonp(file);
+  } catch (err) {
+    console.error('delete/file/id', err);
+    res.status(500).send('Bad Request Delete job');
+  }
+});
+app.get('/usage', async (req, res) => {
+  try {
+    const usage = await billing.getUsage(req.user);
+    res.status(200).jsonp({ type: req.type, usage });
+  } catch (err) {
+    console.error('/get/usage', err);
+    res.status(500).send('Bad Request get stripe signup link');
+  }
+});
+
+// TODO: estimation
+app.post('/usage', async (req, res) => {
+  try {
+    if (req.body.type === 'BeatCaps') {
+      const estimate = billing.recordUsage(req.user, req.body.usage);
+      // const estimate = '0';
+      res.status(200).jsonp({ type: 'BeatCaps', estimate });
+    } else {
+      const estimate = billing.setUsage(req.user, req.body.usage);
+      // const estimate = '0';
+      res.status(200).jsonp({ type: 'Overleia', estimate });
+    }
+  } catch (err) {
+    console.error('/post/usage', err);
+    res.status(500).send('Bad Request');
+  }
+});
+
+app.put('/usage', async (req, res) => {
+  try {
+    const registrationLink = await billing.getBillingLink(req.user);
+    res.status(200).jsonp({ url: registrationLink });
+  } catch (err) {
+    console.error('/put/usage', err);
+    res.status(500).send('Bad Request');
+  }
+});
+
+// verify
+app.patch('/usage', async (req, res) => {
+  try {
+    const usageInfo = await billing.verifyBilling(req.user, req.body.session_id);
+    // res.status(200).send('Success');
+    res.status(200).jsonp(usageInfo);
+    // TODO: get usage data { verified: true, beatcaps: 1231, overleia: 12312 }
+  } catch (err) {
+    console.error('/patch/usage', err);
+    res.status(500).send('Bad Request');
+  }
+});
+
 // ABSTRACTION: create input
 const createInput = async function createInput(file, id, owner, status = 'In Progress') {
   return InputModel.create({
@@ -255,13 +331,16 @@ app.post('/file', async (req, res) => {
     const id = req.body.id || uuidv4();
     console.log('body', req.body);
     const size = await proc.sizeOf(req.body.file, `private/${req.user.identityId}/`);
+    const time = await proc.mediaLength(req.body.file, `private/${req.user.identityId}/`); // is this the file path?
     const file = await InputModel.create({
       file: req.body.file,
       id,
       owner: req.user.identityId,
       status: 'In Progress',
       size,
+      time,
     });
+    // TODO: update Stripe storage usage
     res.status(200).jsonp(file);
   } catch (err) {
     console.error('post/file', err);

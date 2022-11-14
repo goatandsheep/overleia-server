@@ -3,11 +3,11 @@ const DynamoDbLocal = require('dynamodb-local');
 const { v4: uuidv4 } = require('uuid');
 const app = require('../src/app');
 // const services = require('../src/services');
-const {
-  InputModel,
-  OutputModel,
-  TemplateModel,
-} = require('../src/models');
+// const {
+//   InputModel,
+//   OutputModel,
+//   TemplateModel,
+// } = require('../src/models');
 
 const dynamoLocalPort = 8000;
 
