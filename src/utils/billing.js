@@ -18,7 +18,7 @@ const beatcapsUsageAttr = process.env.STRIPE_DEV_MODE !== 'true' ? 'custom:beatc
  */
 const getCustomer = async (user) => {
   // if cognito has customer ID, return that
-  let customerId = user[customerAttrName];
+  let customerId = user.attributes[customerAttrName];
 
   // if cognito doesn't have customer ID create customer ID
   if (!customerId) {
@@ -48,10 +48,11 @@ const getCustomer = async (user) => {
 const getUsage = async (user) => {
   // TODO: if Beatcaps is enabled
   let verified = true;
-  // const beatcapsSubscriptionId = user[beatcapsAttrName];
-  const storageSubscriptionId = user[storageAttrName];
+  // const beatcapsSubscriptionId = user.attributes[beatcapsAttrName];
+  const storageSubscriptionId = user.attributes[storageAttrName];
   if (!storageSubscriptionId) {
     // throw new Error('No keys');
+    console.log('user', user);
     verified = false;
   }
 
@@ -71,17 +72,17 @@ const getUsage = async (user) => {
   // usageRecordSummaries.data[0].total_usage
 
   return {
-    beatcapsUsage: user[beatcapsUsageAttr],
-    storageUsage: user[storageUsageAttr],
+    beatcapsUsage: user.attributes[beatcapsUsageAttr] || 0,
+    storageUsage: user.attributes[storageUsageAttr] || 0,
     verified,
   };
 };
 
 // beatcaps / metered stuff
 const recordUsage = async (user, usage) => {
-  const subscriptionId = user[beatcapsAttrName];
+  const subscriptionId = user.attributes[beatcapsAttrName];
 
-  let currentUsage = user[beatcapsUsageAttr];
+  let currentUsage = user.attributes[beatcapsUsageAttr];
   currentUsage += usage;
 
   await cognitoIdentityInstance.adminUpdateUserAttributes({
@@ -106,7 +107,7 @@ const recordUsage = async (user, usage) => {
 
 // storage
 const setUsage = async (user, usage) => {
-  const subscriptionId = user[storageAttrName];
+  const subscriptionId = user.attributes[storageAttrName];
 
   await cognitoIdentityInstance.adminUpdateUserAttributes({
     UserAttributes: [{
